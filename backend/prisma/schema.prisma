@@ -53,8 +53,8 @@ model Student {
   current_study_year String
   passing_year       String
   batch              String
-  team               Team         @relation("TeamMembers", fields: [teamId], references: [id])
-  teamId             Int
+  team               Team?         @relation("TeamMembers", fields: [teamId], references: [id])
+  teamId             Int?
   marks              Mark?        @relation("StudentMarks")
   evaluations        Evaluation[] @relation("StudentEvaluations")
   teamLeader         Team?        @relation("TeamLeader")
@@ -64,8 +64,8 @@ model Team {
   id            Int       @id @default(autoincrement()) @unique
   name          String
   students      Student[] @relation("TeamMembers")
-  project       Project   @relation(fields: [project_id], references: [id])
-  project_id    Int
+  project       Project?   @relation(fields: [project_id], references: [id])
+  project_id    Int?
   leader        Student   @relation("TeamLeader", fields: [leaderId], references: [id])
   leaderId      Int       @unique
   studentsCount Int       @default(0)
@@ -84,7 +84,6 @@ model Faculty {
   id          Int          @id @default(autoincrement()) @unique
   user        User         @relation("FacultyRef", fields: [userId], references: [id])
   userId      String       @unique
-  department  Department
   evaluations Evaluation[]
 }
 
