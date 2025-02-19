@@ -24,7 +24,7 @@ export default function Login() {
                         </div>
                         <div className="text-sm text-blue-600 hover:underline cursor-pointer">  Forgot Password?
                                 </div>
-                        <Button>Login</Button>
+                        <Button>login</Button>
                         
                     </form>
 
