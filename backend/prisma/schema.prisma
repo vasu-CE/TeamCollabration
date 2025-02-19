@@ -34,7 +34,7 @@ enum Status {
 }
 
 model User {
-  id         String     @id @unique
+  id         String     @id @default(uuid()) @unique
   email      String     @unique
   name       String
   password   String
@@ -47,7 +47,7 @@ model User {
 }
 
 model Student {
-  id                 Int          @id @unique
+  id                 Int          @id @default(autoincrement())  @unique
   user               User         @relation("StudentRef", fields: [userId], references: [id])
   userId             String       @unique
   current_study_year String
@@ -61,7 +61,7 @@ model Student {
 }
 
 model Team {
-  id            Int       @id @unique
+  id            Int       @id @default(autoincrement()) @unique
   name          String
   students      Student[] @relation("TeamMembers")
   project       Project   @relation(fields: [project_id], references: [id])
@@ -72,7 +72,7 @@ model Team {
 }
 
 model Project {
-  id          Int      @id @unique
+  id          Int      @id @default(autoincrement()) @unique
   title       String
   description String
   technology  String[]
@@ -81,7 +81,7 @@ model Project {
 }
 
 model Faculty {
-  id          Int          @id @unique
+  id          Int          @id @default(autoincrement()) @unique
   user        User         @relation("FacultyRef", fields: [userId], references: [id])
   userId      String       @unique
   department  Department
@@ -89,14 +89,14 @@ model Faculty {
 }
 
 model Admin {
-  id         Int        @id @unique
+  id         Int        @id @default(autoincrement()) @unique
   user       User       @relation("AdminRef", fields: [userId], references: [id])
   userId     String     @unique
   department Department
 }
 
 model Mark {
-  id          Int          @id @unique
+  id          Int          @id @default(autoincrement()) @unique
   internal1   Int
   internal2   Int?
   external    Int?
@@ -106,7 +106,7 @@ model Mark {
 }
 
 model Evaluation {
-  id             Int      @id @unique
+  id             Int      @id @default(autoincrement()) @unique
   marks          Mark?    @relation(fields: [marksId], references: [id])
   marksId        Int?
   student        Student  @relation("StudentEvaluations", fields: [studentId], references: [id])
