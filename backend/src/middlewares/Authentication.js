@@ -1,7 +1,8 @@
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/ApiError.js";
 import prisma from "../utils/prismClient.js";
+import jwt from "jsonwebtoken";
 
-const isAuthenticated = async (req, res) => {
+const isAuthenticated = async (req, res ,next) => {
   try {
     const token = req.cookies?.token;
 
@@ -25,7 +26,7 @@ const isAuthenticated = async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json(ApiError(401, "User not authenticated", ["Unauthorized"]));
+        .json(new ApiError(401, "User not authenticated", ["Unauthorized"]));
     }
 
     req.user = user;
@@ -33,7 +34,7 @@ const isAuthenticated = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json(new ApiError(500, "Internal Server Error", err));
+      .json(new ApiError(500,err.message || "Internal Server Error", err));
   }
 };
 
