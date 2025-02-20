@@ -8,21 +8,11 @@ export const loginUser = async (req , res) => {
     try{
         const { identifier , password } = req.body;
 
-        let user;
-        if(identifier.includes('@')){
-            user = await prisma.user.findUnique({
-                where : {
-                    email : identifier
-                }
-            })
-        }else{
-            const student = await prisma.student.findUnique({
-                where : { id : identifier },
-                include : {user : true}
-            })
-
-            if(student) user = student.user
-        }
+        const user =await prisma.user.findFirst({
+            where : {
+                OR : [ {email : identifier } , { id : identifier }]
+            }
+        })
 
         if(!user){
             return res.status(404).json(new ApiError(404 , "User not found"));
