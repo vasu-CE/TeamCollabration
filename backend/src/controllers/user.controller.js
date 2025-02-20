@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { ApiError } from '../utils/ApiError.js';
 
 const prisma = new PrismaClient();
 
