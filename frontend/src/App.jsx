@@ -1,17 +1,15 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button } from './components/ui/button'
-import Login from './components/login'
-
-function App() {
+import { Routes, Route } from "react-router-dom";
+import CreateTeam from "./components/CreateTeam";
+import TeamDashboard from "./components/TeamDashboard";
+import StudentPanel from "./components/studentdashbord";
+import JoinTeam from "./components/JoinTeam";
+export default function App() {
   return (
-    <>
-  <Login></Login>
-     
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<StudentPanel />} />
+      <Route path="/create-team" element={<CreateTeam />} />
+      <Route path="/join-team" element={<JoinTeam/>}/>
+      <Route path="/dashboard" element={<TeamDashboard />} />
+    </Routes>
+  );
 }
-
-export default App
