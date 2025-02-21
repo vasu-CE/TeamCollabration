@@ -34,7 +34,7 @@ enum Status {
 }
 
 model User {
-  id         String     @id @default(uuid()) @unique
+  id         String     @id @unique @default(uuid())
   email      String     @unique
   name       String
   password   String
@@ -47,32 +47,45 @@ model User {
 }
 
 model Student {
-  id                 String       @id @default(uuid())  @unique
-  user               User         @relation("StudentRef", fields: [userId], references: [id])
-  userId             String       @unique
+  id                 String        @id @unique @default(uuid())
+  user               User          @relation("StudentRef", fields: [userId], references: [id])
+  userId             String        @unique
   current_study_year String
   passing_year       String
   batch              String
   team               Team?         @relation("TeamMembers", fields: [teamId], references: [id])
   teamId             Int?
-  marks              Mark?        @relation("StudentMarks")
-  evaluations        Evaluation[] @relation("StudentEvaluations")
-  teamLeader         Team?        @relation("TeamLeader")
+  marks              Mark?         @relation("StudentMarks")
+  evaluations        Evaluation[]  @relation("StudentEvaluations")
+  teamLeader         Team?         @relation("TeamLeader")
+  JoinRequest        JoinRequest[]
 }
 
 model Team {
-  id            Int       @id @default(autoincrement()) @unique
+  id            Int           @id @unique @default(autoincrement())
   name          String
-  students      Student[] @relation("TeamMembers")
-  project       Project?   @relation(fields: [project_id], references: [id])
+  students      Student[]     @relation("TeamMembers")
+  project       Project?      @relation(fields: [project_id], references: [id])
   project_id    Int?
-  leader        Student   @relation("TeamLeader", fields: [leaderId], references: [id])
-  leaderId      String       @unique
-  studentsCount Int       @default(0)
+  leader        Student       @relation("TeamLeader", fields: [leaderId], references: [id])
+  leaderId      String        @unique
+  studentsCount Int           @default(0)
+  teamCode      String        @unique
+  JoinRequest   JoinRequest[]
+}
+
+model JoinRequest {
+  id        String   @id @default(uuid())
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    Int
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
 }
 
 model Project {
-  id          Int      @id @default(autoincrement()) @unique
+  id          Int      @id @unique @default(autoincrement())
   title       String
   description String
   technology  String[]
@@ -81,31 +94,31 @@ model Project {
 }
 
 model Faculty {
-  id          Int          @id @default(autoincrement()) @unique
+  id          Int          @id @unique @default(autoincrement())
   user        User         @relation("FacultyRef", fields: [userId], references: [id])
   userId      String       @unique
   evaluations Evaluation[]
 }
 
 model Admin {
-  id         Int        @id @default(autoincrement()) @unique
+  id         Int        @id @unique @default(autoincrement())
   user       User       @relation("AdminRef", fields: [userId], references: [id])
   userId     String     @unique
   department Department
 }
 
 model Mark {
-  id          Int          @id @default(autoincrement()) @unique
+  id          Int          @id @unique @default(autoincrement())
   internal1   Int
   internal2   Int?
   external    Int?
   student     Student      @relation("StudentMarks", fields: [studentId], references: [id])
-  studentId   String          @unique
+  studentId   String       @unique
   evaluations Evaluation[]
 }
 
 model Evaluation {
-  id             Int      @id @default(autoincrement()) @unique
+  id             Int      @id @unique @default(autoincrement())
   marks          Mark?    @relation(fields: [marksId], references: [id])
   marksId        Int?
   student        Student  @relation("StudentEvaluations", fields: [studentId], references: [id])
