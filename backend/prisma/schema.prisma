@@ -65,13 +65,12 @@ model Team {
   id            Int           @id @unique @default(autoincrement())
   name          String
   students      Student[]     @relation("TeamMembers")
-  project       Project?      @relation(fields: [project_id], references: [id])
-  project_id    Int?
   leader        Student       @relation("TeamLeader", fields: [leaderId], references: [id])
   leaderId      String        @unique
   studentsCount Int           @default(0)
   teamCode      String        @unique
   JoinRequest   JoinRequest[]
+  projects      Project[]
 }
 
 model JoinRequest {
@@ -90,7 +89,8 @@ model Project {
   description String
   technology  String[]
   status      Status
-  teams       Team[]
+  team Team @relation(fields: [teamId] , references: [id])
+  teamId Int
 }
 
 model Faculty {

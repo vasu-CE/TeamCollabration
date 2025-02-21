@@ -6,5 +6,6 @@ import { addStudent } from "../controllers/faculty.controller.js";
 const router = express.Router();
 
 router.post('/add-student' , isAuthenticated , isFaculty , addStudent);
+router.get('/get-students' , isAuthenticated , isFaculty , )
 
 export default router;

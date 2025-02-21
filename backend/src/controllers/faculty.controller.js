@@ -48,3 +48,35 @@ export const addStudent = async (req , res) => {
         res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
     }
 }
+
+export const getStudents = async (req , res) => {
+    try{
+        const faculty = await prisma.faculty.findFirst({
+            where : { id : req.user.id}
+        })
+        const students = await prisma.student.findMany({
+            where : {
+                institute : faculty.institute,
+                department : faculty.department
+            }
+        })
+
+        return res.status(200).status(200 , {} , students);
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
+    }
+}
+
+export const deleteStudents = async (req , res) => {
+    try{
+        const {studentId} = req.params;
+
+        await prisma.student.delete({
+            where : { id : studentId }
+        })
+
+        return res.status(500).json(new ApiError(500 , "Student deleted successfully"));
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"))
+    }
+}
