@@ -235,4 +235,9 @@ export const joinTeam = async (req , res) => {
 
 export const createProject = async (req , res) => {
     const { projectName } = req.body;
+
+    if(!projectName){
+        return res.status(404).json(new ApiError(404 , err.message || "Projrct name not found"));
+
+    }
 }
