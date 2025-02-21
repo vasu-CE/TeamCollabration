@@ -234,5 +234,5 @@ export const joinTeam = async (req , res) => {
 }
 
 export const createProject = async (req , res) => {
-    
+    const { projectName } = req.body;
 }
