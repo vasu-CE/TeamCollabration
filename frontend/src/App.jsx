@@ -1,12 +1,4 @@
-import { Routes, Route } from "react-router-dom";
-<<<<<<< HEAD
-
-import Dashboard from "./components/facultydashbord"
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Dashboard/>} />
-=======
+import { Route,Routes } from "react-router-dom";
 import CreateTeam from "./components/CreateTeam";
 import TeamDashboard from "./components/TeamDashboard";
 import StudentPanel from "./components/studentdashbord";
@@ -21,7 +13,6 @@ export default function App() {
       <Route path="/join-team" element={<JoinTeam/>}/>
       <Route path="/dashboard" element={<TeamDashboard />} />
       <Route path="/temp" element={<Temp />} />
->>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
     </Routes>
   );
 }
