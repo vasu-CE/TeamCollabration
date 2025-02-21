@@ -1,0 +1,1 @@
+export const HOME_API = "http://localhost:3000"

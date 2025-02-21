@@ -7,7 +7,6 @@ import jwt from "jsonwebtoken"
 export const loginUser = async (req , res) => {
     try{
         const { identifier , password } = req.body;
-
         const user =await prisma.user.findFirst({
             where : {
                 OR : [ {email : identifier } , { id : identifier }]
@@ -35,7 +34,7 @@ export const loginUser = async (req , res) => {
             secure: process.env.NODE_ENV === "production",
         });
 
-        res.status(200).json(new ApiResponse(200 , "Login Successfull"))
+        res.status(200).json(new ApiResponse(200 , "Login Successfull" , user))
     }catch(err){
         console.log(err);
         return res.status(500).json(new ApiError(500 , "internal Server Error"));

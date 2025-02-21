@@ -6,12 +6,21 @@ import studentRoutes from "./routes/student.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import facultyRoutes from "./routes/faculty.routes.js";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
+const corsOptions = {
+  origin: "http://localhost:5173", // Allow frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+  credentials: true // Allow cookies and credentials
+};
+
+app.use(cors(corsOptions))
 
 app.use("/auth" , authRoutes);
 app.use("/users" , userRoutes);

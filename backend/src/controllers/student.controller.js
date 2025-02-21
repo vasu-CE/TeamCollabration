@@ -98,7 +98,7 @@ export const createTeam = async (req, res) => {
 // }
 
 export const sendJoinRequest = async (req, res) => {
-    const { studentId } = req.body;
+    const { studentId } = req.params;
     try {
         const leader = await prisma.student.findFirst({ where: { userId: req.user.id } });
         const team = await prisma.team.findFirst({ where: { leaderId: leader.id } });
@@ -131,7 +131,7 @@ export const sendJoinRequest = async (req, res) => {
 };
 
 export const acceptJoinRequest = async (req, res) => {
-    const { requestId } = req.body;
+    const { requestId } = req.params;
     try {
         const request = await prisma.joinRequest.findUnique({ where: { id: requestId } });
 
@@ -167,9 +167,15 @@ export const acceptJoinRequest = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 export const rejectJoinRequest = async (req, res) => {
     const { requestId } = req.body;
     try {
+=======
+export const rejectJoinRequest = async (req , res) => {
+    const {requestId} = req.params;
+    try{
+>>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
         const request = await prisma.joinRequest.findUnique({
             where: { id: requestId }
         })
@@ -233,11 +239,76 @@ export const joinTeam = async (req, res) => {
     }
 }
 
+<<<<<<< HEAD
 export const createProject = async (req, res) => {
     const { projectName } = req.body;
 
     if (!projectName) {
         return res.status(404).json(new ApiError(404, err.message || "Projrct name not found"));
+=======
+export const createProject = async (req , res) => {
+   try{
+    const { projectName , description , technology } = req.body;
+>>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
 
+    if(!projectName || !description || !technology){
+        return res.status(404).json(new ApiError(404 , "Info is missing"));
     }
+<<<<<<< HEAD
 }
+=======
+
+    const leader = await prisma.student.findFirst({
+        where : { userId : req.user.id}
+    })
+
+    const team = await prisma.team.findFirst({
+        where : { leaderId : leader.id }
+    })
+
+    if(!team){
+        return res.status(404).json(new ApiError(404 , "Team is not found"));
+    }
+
+    const project = await prisma.project.create({
+        data : {
+            title : projectName,
+            description,
+            technology,
+            status : "IN_PROGRESS",
+            team : {
+                connect : {
+                    id : team.id
+                }
+            }
+        }
+    })
+
+    return res.status(200).json(new ApiError(200 , "Project created successfully" , project))
+   }catch(err){
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+   }
+}
+
+export const getTeamWithProjects = async (req, res) => {
+    try {
+        const { teamId } = req.params;  
+
+        const team = await prisma.team.findUnique({
+            where: { id: Number(teamId) },  
+            include: {
+                projects: true
+            }
+        });
+
+        if (!team) {
+            return res.status(404).json(new ApiError(404, "Team not found"));
+        }
+
+        return res.status(200).json({ success: true, team });
+
+    } catch (error) {
+        return res.status(500).json(new ApiError(500, error.message || "Internal Server Error"));
+    }
+};
+>>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
