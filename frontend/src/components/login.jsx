@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 export default function Login() {
     return (
         <div>
-
             <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
                 <div className="bg-white p-8 rounded-lg shadow-md w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
                     <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">

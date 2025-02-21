@@ -47,14 +47,14 @@ model User {
 }
 
 model Student {
-  id                 Int          @id @default(autoincrement())  @unique
+  id                 String       @id @default(uuid())  @unique
   user               User         @relation("StudentRef", fields: [userId], references: [id])
   userId             String       @unique
   current_study_year String
   passing_year       String
   batch              String
-  team               Team         @relation("TeamMembers", fields: [teamId], references: [id])
-  teamId             Int
+  team               Team?         @relation("TeamMembers", fields: [teamId], references: [id])
+  teamId             Int?
   marks              Mark?        @relation("StudentMarks")
   evaluations        Evaluation[] @relation("StudentEvaluations")
   teamLeader         Team?        @relation("TeamLeader")
@@ -64,10 +64,10 @@ model Team {
   id            Int       @id @default(autoincrement()) @unique
   name          String
   students      Student[] @relation("TeamMembers")
-  project       Project   @relation(fields: [project_id], references: [id])
-  project_id    Int
+  project       Project?   @relation(fields: [project_id], references: [id])
+  project_id    Int?
   leader        Student   @relation("TeamLeader", fields: [leaderId], references: [id])
-  leaderId      Int       @unique
+  leaderId      String       @unique
   studentsCount Int       @default(0)
 }
 
@@ -84,7 +84,6 @@ model Faculty {
   id          Int          @id @default(autoincrement()) @unique
   user        User         @relation("FacultyRef", fields: [userId], references: [id])
   userId      String       @unique
-  department  Department
   evaluations Evaluation[]
 }
 
@@ -101,7 +100,7 @@ model Mark {
   internal2   Int?
   external    Int?
   student     Student      @relation("StudentMarks", fields: [studentId], references: [id])
-  studentId   Int          @unique
+  studentId   String          @unique
   evaluations Evaluation[]
 }
 
@@ -110,7 +109,7 @@ model Evaluation {
   marks          Mark?    @relation(fields: [marksId], references: [id])
   marksId        Int?
   student        Student  @relation("StudentEvaluations", fields: [studentId], references: [id])
-  studentId      Int
+  studentId      String
   faculty        Faculty  @relation(fields: [facultyId], references: [id])
   facultyId      Int
   evaluationDate DateTime @default(now())
