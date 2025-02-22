@@ -1,9 +1,7 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-// import { LineChart } from "@/components/ui/lineChart"
+import { LineChart } from "./ui/lineChart"
 
 const teamMembers = [
   {
@@ -88,9 +86,9 @@ export default function TeamDetailPage() {
                 <CardTitle>GITHUB GRAPH</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* <div className="h-[300px]">
+                <div className="h-[300px]">
                   <LineChart data={githubData} />
-                </div> */}
+                </div>
               </CardContent>
             </Card>
           </div>
