@@ -5,6 +5,8 @@ import StudentPanel from "./components/studentdashbord";
 import JoinTeam from "./components/JoinTeam";
 import Login from "./components/login";
 import Temp from "./components/temp";
+import TeamsPage from "./components/Teams";
+import TeamDetailPage from "./components/Team";
 export default function App() {
   return (
     <Routes>
@@ -13,6 +15,8 @@ export default function App() {
       <Route path="/join-team" element={<JoinTeam/>}/>
       <Route path="/dashboard" element={<TeamDashboard />} />
       <Route path="/temp" element={<Temp />} />
+      <Route path="/teams" element = {<TeamsPage />} />
+      <Route path="/team" element = {<TeamDetailPage />} />
     </Routes>
   );
 }
