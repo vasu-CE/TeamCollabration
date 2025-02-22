@@ -8,16 +8,21 @@ export const createTeam = async (req , res) => {
     const teamCode = Math.random().toString(36).slice(-6)
 
     try{
-        const { name , members } = req.body;
+        const { name } = req.body;
         const leader = await prisma.student.findFirst({
             where : { userId : req.user.id }
         })
 
-        const students = await prisma.student.findMany({
+        const existingTeam = await prisma.studentTeamHistory.findFirst({
             where : {
-                userId : { in : members.map(member => member.id) , mode : "insensitive"}
+                studentId : leader.id,
+                resetId : leader.resetId
             }
-        })
+        })  
+
+        if (existingTeam) {
+            return res.status(400).json(new ApiError(400, "You have already joined or created a team in this reset cycle."));
+        }
 
         const team = await prisma.team.create({
             data : {
@@ -28,17 +33,15 @@ export const createTeam = async (req , res) => {
                         id : leader.id 
                     }
                 },
-                students : {
-                    connect : students.map((student) => ({ id : student.id }))
-                },
-                studentsCount : students.length + 1
+                studentsCount : 1
             }
         })
 
-        await prisma.student.update({
-            where : { id : leader.id},
+        await prisma.studentTeamHistory.create({
             data : {
-                teamId : team.id
+                studentId : leader.id,
+                teamId : team.id,
+                resetId : leader.resetId
             }
         })
 
@@ -100,10 +103,12 @@ export const createTeam = async (req , res) => {
 export const sendJoinRequest = async (req, res) => {
     const { studentId } = req.params;
     try {
-        const leader = await prisma.student.findFirst({ where: { userId: req.user.id } });
-        const team = await prisma.team.findFirst({ where: { leaderId: leader.id } });
+        const leader = await prisma.student.findFirst({ 
+            where: { userId: req.user.id },
+            include: { team: true }
+        });
 
-        if (!team) {
+        if (!leader || !leader.team) {
             return res.status(403).json(new ApiError(403, "You are not a team leader"));
         }
 
@@ -113,13 +118,28 @@ export const sendJoinRequest = async (req, res) => {
             return res.status(404).json(new ApiError(404, "Student not found"));
         }
 
-        if (student.teamId) {
+        const existingMembership = await prisma.studentTeamHistory.findFirst({
+            where: { studentId: student.id, resetId: leader.resetId }
+        });
+
+        if (existingMembership) {
             return res.status(400).json(new ApiError(400, "Student is already in a team"));
+        }
+
+        const existingRequest = await prisma.joinRequest.findFirst({
+            where: {
+                teamId: team.id,
+                studentId: student.id
+            }
+        });
+
+        if (existingRequest) {
+            return res.status(400).json(new ApiError(400, "Join request already sent"));
         }
 
         await prisma.joinRequest.create({
             data: {
-                teamId: team.id,
+                teamId: leader.xteam.id,
                 studentId: student.id,
             }
         });
@@ -147,19 +167,35 @@ export const acceptJoinRequest = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Team is full"));
         }
 
-        await prisma.team.update({
-            where : { id : request.teamId },
-            data : {
-                students : {
-                    connect : {
-                        id : request.studentId
-                    }
-                },
-                studentsCount : { increment : 1 }
-            }
-        })
+        const student = await prisma.student.findUnique({ where: { id: request.studentId } });
 
-        await prisma.joinRequest.delete({ where: { id: requestId } });
+        const existingMembership = await prisma.studentTeamHistory.findFirst({
+            where: { studentId: student.id, resetId: student.resetId }
+        });
+
+        if (existingMembership) {
+            return res.status(400).json(new ApiError(400, "Student is already in another team"));
+        }
+
+        console.log(team)
+
+        await prisma.$transaction([
+            prisma.studentTeamHistory.create({
+                data: {
+                    studentId: request.studentId,
+                    teamId: request.teamId,
+                    resetId: student.resetId
+                }
+            }),
+            prisma.team.update({
+                where: { id: request.teamId },
+                data: {
+                    students: { connect: { id: request.studentId } },
+                    studentsCount: { increment: 1 }
+                }
+            }),
+            prisma.joinRequest.delete({ where: { id: requestId } })
+        ]);
 
         return res.status(200).json(new ApiResponse(200, "Join request accepted"));
     } catch (err) {
@@ -214,19 +250,37 @@ export const joinTeam = async (req , res) => {
             where : { userId : req.user.id }
         })
 
-        await prisma.team.update({
-            where : { id : team.id },
-            data : {
-                students : {
-                    connect : {
-                        id : student.id
-                    },  
-                },
-                studentsCount : {increment : 1}
-            }
-        })
+        const existingMembership = await prisma.studentTeamHistory.findFirst({
+            where: { studentId: student.id, resetId: student.resetId }
+        });
 
-        return res.status(200).json(new ApiResponse(200 , "Joined the team"));
+        if (existingMembership) {
+            return res.status(400).json(new ApiError(400, "Student is already in another team"));
+        }
+
+        await prisma.$transaction([
+            prisma.team.update({
+                where : { id : team.id },
+                data : {
+                    students : {
+                        connect : {
+                            id : student.id
+                        },  
+                    },
+                    studentsCount : {increment : 1}
+                }
+            }),
+            await prisma.studentTeamHistory.create({
+                data : {
+                    studentId : student.id,
+                    teamId : team.id,
+                    resetId : student.resetId
+                }
+            })    
+        ])
+
+        
+        return res.status(200).json(new ApiResponse(200 , "Joined the team successfullyx"));
         
     }catch(err){
         return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
@@ -235,7 +289,7 @@ export const joinTeam = async (req , res) => {
 
 export const createProject = async (req , res) => {
    try{
-    const { projectName , description , technology } = req.body;
+    const { projectName , description , technology ,gitHubLink } = req.body;
 
     if(!projectName || !description || !technology){
         return res.status(404).json(new ApiError(404 , "Info is missing"));
@@ -259,6 +313,7 @@ export const createProject = async (req , res) => {
             description,
             technology,
             status : "IN_PROGRESS",
+            gitHubLink,
             team : {
                 connect : {
                     id : team.id

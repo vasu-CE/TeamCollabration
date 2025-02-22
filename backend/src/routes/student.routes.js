@@ -14,6 +14,8 @@ router.get('/join-team' , isAuthenticated , joinTeam);
 router.post('/create-project' , isAuthenticated , createProject);
 router.get('/get-team/:teamId' , isAuthenticated , getTeamWithProjects);
 
+router.get('/get-all-projects' , isAuthenticated , )
+
 
 // router.get('/add-member' , isAuthenticated , addMember)
 

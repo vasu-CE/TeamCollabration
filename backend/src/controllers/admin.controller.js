@@ -84,3 +84,18 @@ export const addFaculty = async (req , res) => {
         res.status(500).json(new ApiError(500 , err.message || "Internal Server Error"));
     }
 }
+
+export const updateResetId = async (req , res) => {
+    try{
+        await prisma.student.updateMany({
+            where : {
+                institute : req.user.institute
+            },
+            data : {
+                resetId : { increment : 1 }
+            }
+        })
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
+    }
+}
