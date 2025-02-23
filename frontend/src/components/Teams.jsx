@@ -1,12 +1,14 @@
 import * as React from "react"
 import { Plus, Search, Filter, Grid2X2, List, Calendar } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { Button } from "./ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Input } from "./ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import Sidebar from "../page/Dashboard"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import CreateJoinTeam from "./CreateJoinTeam"
 
 const teams = [
   {
@@ -42,8 +44,18 @@ export default function TeamsPage() {
       <div className="flex-1 p-8">
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold">Teams</h1>
-          <Button>CREATE/JOIN TEAM</Button>
+          <Dialog>
+            <DialogTrigger className="bg-blue-500 text-white px-4 py-1.5 rounded">Create/Join Team</DialogTrigger>
+            <DialogContent  className="w-[25%]">
+              <DialogHeader>
+                <DialogTitle>Create/Join Team </DialogTitle>
+                <CreateJoinTeam />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
+          
+
 
         <div className="mt-6 flex items-center gap-4">
           <div className="relative flex-1">

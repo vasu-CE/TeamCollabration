@@ -45,7 +45,7 @@ export const createTeam = async (req , res) => {
             }
         })
 
-        res.status(200).json(new ApiResponse(200 , "Team Created Successfully" ,team ));        
+        return res.status(200).json(new ApiResponse(200 , "Team Created Successfully" ,team ));        
     }catch(err){
         res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
     }
