@@ -7,17 +7,21 @@ const prisma = new PrismaClient();
 export const createTeam = async (req, res) => {
     const teamCode = Math.random().toString(36).slice(-6)
 
-    try {
-        const { name, members } = req.body;
+    try{
+        const { name , members } = req.body;
         const leader = await prisma.student.findFirst({
             where: { userId: req.user.id }
         })
 
         const students = await prisma.student.findMany({
-            where: {
-                userId: { in: members.map(member => member.id), mode: "insensitive" }
+            where : {
+                userId : { in : members.map(member => member.id) , mode : "insensitive"}
             }
-        })
+        })  
+
+        if (existingTeam) {
+            return res.status(400).json(new ApiError(400, "You have already joined or created a team in this reset cycle."));
+        }
 
         const team = await prisma.team.create({
             data: {
@@ -28,23 +32,23 @@ export const createTeam = async (req, res) => {
                         id: leader.id
                     }
                 },
-                students: {
-                    connect: students.map((student) => ({ id: student.id }))
+                students : {
+                    connect : students.map((student) => ({ id : student.id }))
                 },
-                studentsCount: students.length + 1
+                studentsCount : students.length + 1
             }
         })
 
         await prisma.student.update({
-            where: { id: leader.id },
-            data: {
-                teamId: team.id
+            where : { id : leader.id},
+            data : {
+                teamId : team.id
             }
         })
 
-        res.status(200).json(new ApiResponse(200, "Team Created Successfully", team));
-    } catch (err) {
-        res.status(500).json(new ApiError(500, err.message || "Internal Server error"));
+        res.status(200).json(new ApiResponse(200 , "Team Created Successfully" ,team ));        
+    }catch(err){
+        res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
     }
 }
 
@@ -100,11 +104,20 @@ export const createTeam = async (req, res) => {
 export const sendJoinRequest = async (req, res) => {
     const { studentId } = req.params;
     try {
-        const leader = await prisma.student.findFirst({ where: { userId: req.user.id } });
-        const team = await prisma.team.findFirst({ where: { leaderId: leader.id } });
+        const leader = await prisma.student.findFirst({ 
+            where: { userId: req.user.id }
+        });
+
+        if (!leader) {
+            return res.status(403).json(new ApiError(403, "You are not a team leader"));
+        }
+
+        const team = await prisma.team.findFirst({
+            where: { leaderId: leader.id }
+        });
 
         if (!team) {
-            return res.status(403).json(new ApiError(403, "You are not a team leader"));
+            return res.status(403).json(new ApiError(403, "You do not have a team"));
         }
 
         const student = await prisma.student.findFirst({ where: { userId: studentId } });
@@ -112,9 +125,23 @@ export const sendJoinRequest = async (req, res) => {
         if (!student) {
             return res.status(404).json(new ApiError(404, "Student not found"));
         }
-
-        if (student.teamId) {
+        const existingMembership = await prisma.studentTeamHistory.findFirst({
+            where: { studentId: student.id, resetId: leader.resetId }
+        });
+        
+        if (existingMembership) {
             return res.status(400).json(new ApiError(400, "Student is already in a team"));
+        }
+        
+        const existingRequest = await prisma.joinRequest.findFirst({
+            where: {
+                teamId: team.id,
+                studentId: student.id
+            }
+        });
+        
+        if (existingRequest) {
+            return res.status(400).json(new ApiError(400, "Join request already sent"));
         }
 
         await prisma.joinRequest.create({
@@ -148,14 +175,14 @@ export const acceptJoinRequest = async (req, res) => {
         }
 
         await prisma.team.update({
-            where: { id: request.teamId },
-            data: {
-                students: {
-                    connect: {
-                        id: request.studentId
+            where : { id : request.teamId },
+            data : {
+                students : {
+                    connect : {
+                        id : request.studentId
                     }
                 },
-                studentsCount: { increment: 1 }
+                studentsCount : { increment : 1 }
             }
         })
 
@@ -221,21 +248,21 @@ export const joinTeam = async (req, res) => {
         })
 
         await prisma.team.update({
-            where: { id: team.id },
-            data: {
-                students: {
-                    connect: {
-                        id: student.id
-                    },
+            where : { id : team.id },
+            data : {
+                students : {
+                    connect : {
+                        id : student.id
+                    },  
                 },
-                studentsCount: { increment: 1 }
+                studentsCount : {increment : 1}
             }
         })
 
-        return res.status(200).json(new ApiResponse(200, "Joined the team"));
-
-    } catch (err) {
-        return res.status(500).json(new ApiError(500, err.message || "Internal Server error"));
+        return res.status(200).json(new ApiResponse(200 , "Joined the team"));
+        
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
     }
 }
 
@@ -249,7 +276,6 @@ export const createProject = async (req, res) => {
 export const createProject = async (req , res) => {
    try{
     const { projectName , description , technology } = req.body;
->>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
 
     if(!projectName || !description || !technology){
         return res.status(404).json(new ApiError(404 , "Info is missing"));
@@ -276,6 +302,7 @@ export const createProject = async (req , res) => {
             description,
             technology,
             status : "IN_PROGRESS",
+            gitHubLink : gitHubLink.trim(),
             team : {
                 connect : {
                     id : team.id
@@ -311,4 +338,3 @@ export const getTeamWithProjects = async (req, res) => {
         return res.status(500).json(new ApiError(500, error.message || "Internal Server Error"));
     }
 };
->>>>>>> 9de0d20a25edd6f982f9629b8f71b0590612db7a
