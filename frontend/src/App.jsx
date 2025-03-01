@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import { Route,Routes } from "react-router-dom";
-import CreateTeam from "./components/CreateTeam";
-=======
-import { Routes, Route } from "react-router-dom"; 
->>>>>>> c4b65ad6a57541bd0687d9a3c5203068475641cd
 import TeamDashboard from "./components/TeamDashboard";
 import Login from "./components/login";
 import Temp from "./components/temp";
