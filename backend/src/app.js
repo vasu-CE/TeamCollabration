@@ -7,8 +7,6 @@ import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import facultyRoutes from "./routes/faculty.routes.js";
 import cors from "cors";
-import prisma from "./utils/prismClient.js";
-import bcrypt from "bcrypt"
 
 dotenv.config();
 const app = express();
