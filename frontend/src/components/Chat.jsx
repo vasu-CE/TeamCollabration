@@ -12,7 +12,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (chatUser) {
-      axios.get(`http://localhost:5000/api/messages/${chatUser.id}`).then((res) => {
+      axios.get(`http://localhost:3000/api/messages/${chatUser.id}`).then((res) => {
         setMessages(res.data.data);
       });
 

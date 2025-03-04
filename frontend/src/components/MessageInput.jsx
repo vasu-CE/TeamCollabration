@@ -9,7 +9,7 @@ const MessageInput = ({ chatUser, myId, setMessages }) => {
     if (!text.trim()) return;
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/messages/${chatUser.id}`, { text });
+      const res = await axios.post(`http://localhost:3000/api/messages/${chatUser.id}`, { text });
 
       setMessages((prev) => [...prev, res.data.data]);
 
