@@ -13,7 +13,7 @@ export default function App() {
       <Route path="/dashboard" element={<TeamDashboard />} />
       <Route path="/temp" element={<Temp />} />
       <Route path="/teams" element = {<TeamsPage />} />
-      <Route path="/team" element = {<TeamDetailPage />} />
+      <Route path="/performance" element = {<TeamDetailPage />} />
       <Route path="/chat" element = {<ChatInterface />} />
       <Route path="/chatnew" element = {<Chat />} />
       

@@ -28,18 +28,21 @@ function CreateJoinTeam() {
 
     const joinTeamHandeler = async () => {
         try {
-          const res = await axios.post(`${HOME_API}/students/join-team` ,{ teamCode },
-            { withCredentials: true }
-          );
+          const res = await axios.get(`${HOME_API}/students/join-team`, {
+            params: { teamCode },
+            withCredentials: true
+          });
+          
     
           if (res.data.success) {
-            toast.success(res.data.message);
+            toast.success(res.data.message );
+
             setTeamCode(""); 
           } else {
             toast.error(res.data.message);
           }
         } catch (err) {
-          toast.error(err.response?.data?.message || err.message);
+          toast.error(err.response?.data?.message || err.message );
         }
       };
     
@@ -70,17 +73,22 @@ function CreateJoinTeam() {
         </TabsContent>
 
         <TabsContent value="join-team">
-          <h2 className="text-xl font-semibold mb-4">Join a Team</h2>
-          <input
-            type="text"
-            placeholder="Enter Team Code"
-            value={teamCode}
-            className="w-full p-2 border rounded-md"
-          />
-          <button className="w-full mt-4 p-2 bg-green-600 hover:bg-green-500 text-white rounded-md" onChange={joinTeamHandeler}>
-            Join Team
-          </button>
-        </TabsContent>
+  <h2 className="text-xl font-semibold mb-4">Join a Team</h2>
+  <input
+    type="text"
+    placeholder="Enter Team Code"
+    value={teamCode}
+    onChange={(e) => setTeamCode(e.target.value)}  // Make sure this updates state
+    className="w-full p-2 border rounded-md"
+  />
+  <button 
+    className="w-full mt-4 p-2 bg-green-600 hover:bg-green-500 text-white rounded-md" 
+    onClick={joinTeamHandeler}  // Fixed the event
+  >
+    Join Team
+  </button>
+</TabsContent>
+
       </Tabs>
     </div>
   );
