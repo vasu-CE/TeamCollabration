@@ -13,17 +13,6 @@ export const createTeam = async (req , res) => {
             where : { userId : req.user.id }
         })
 
-        const existingTeam = await prisma.studentTeamHistory.findFirst({
-            where : {
-                studentId : leader.id,
-                resetId : leader.resetId
-            }
-        })  
-
-        if (existingTeam) {
-            return res.status(400).json(new ApiError(400, "You have already joined or created a team in this reset cycle."));
-        }
-
         const team = await prisma.team.create({
             data : {
                 teamCode : teamCode,
@@ -33,15 +22,10 @@ export const createTeam = async (req , res) => {
                         id : leader.id 
                     }
                 },
+                students : {
+                    connect : { id : leader.id}
+                },
                 studentsCount : 1
-            }
-        })
-
-        await prisma.studentTeamHistory.create({
-            data : {
-                studentId : leader.id,
-                teamId : team.id,
-                resetId : leader.resetId
             }
         })
 
@@ -124,13 +108,6 @@ export const sendJoinRequest = async (req, res) => {
         if (!student) {
             return res.status(404).json(new ApiError(404, "Student not found"));
         }
-        const existingMembership = await prisma.studentTeamHistory.findFirst({
-            where: { studentId: student.id, resetId: leader.resetId }
-        });
-        
-        if (existingMembership) {
-            return res.status(400).json(new ApiError(400, "Student is already in a team"));
-        }
         
         const existingRequest = await prisma.joinRequest.findFirst({
             where: {
@@ -164,6 +141,14 @@ export const acceptJoinRequest = async (req, res) => {
         if (!request) {
             return res.status(404).json(new ApiError(404, "Join request not found"));
         }
+        // console.log(req.user.id)
+        const student = await prisma.student.findUnique({
+            where : { userId : req.user.id }
+        })
+
+        if(request.studentId !== student.id){
+            return res.status(403).json(new ApiError(403, "You do not have permission"));
+        }
 
         const team = await prisma.team.findUnique({
             where : { id : request.teamId }
@@ -173,29 +158,15 @@ export const acceptJoinRequest = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Team is full"));
         }
 
-        const student = await prisma.student.findUnique({ where: { id: request.studentId } });
-
-        const existingMembership = await prisma.studentTeamHistory.findFirst({
-            where: { studentId: student.id, resetId: student.resetId }
-        });
-
-        if (existingMembership) {
-            return res.status(400).json(new ApiError(400, "Student is already in another team"));
-        }
-
-        console.log(team)
+        // const student = await prisma.student.findUnique({ where: { id: request.studentId } });
 
         await prisma.$transaction([
-            prisma.studentTeamHistory.create({
-                data: {
-                    studentId: request.studentId,
-                    teamId: request.teamId,
-                    resetId: student.resetId
-                }
-            }),
             prisma.team.update({
                 where: { id: request.teamId },
                 data: {
+                    students : {
+                        connect : { id : student.id}
+                    },
                     studentsCount: { increment: 1 }
                 }
             }),
@@ -255,34 +226,18 @@ export const joinTeam = async (req , res) => {
             where : { userId : req.user.id }
         })
 
-        const existingMembership = await prisma.studentTeamHistory.findFirst({
-            where: { studentId: student.id, resetId: student.resetId }
-        });
+        await prisma.team.update({
+            where : { id : team.id },
+            data : {
+                students : {
+                    connect : {
+                        id : student.id
+                    },  
+                },
+                studentsCount : {increment : 1}
+            }
+        })
 
-        if (existingMembership) {
-            return res.status(400).json(new ApiError(400, "Student is already in another team"));
-        }
-
-        await prisma.$transaction([
-            prisma.team.update({
-                where : { id : team.id },
-                data : {
-                    students : {
-                        connect : {
-                            id : student.id
-                        },  
-                    },
-                    studentsCount : {increment : 1}
-                }
-            }),
-            await prisma.studentTeamHistory.create({
-                data : {
-                    studentId : student.id,
-                    teamId : team.id,
-                    resetId : student.resetId
-                }
-            })    
-        ])
 
         
         return res.status(200).json(new ApiResponse(200 , "Joined the team successfullyx"));
@@ -360,14 +315,11 @@ export const getTeams = async (req , res) => {
         const students = await prisma.student.findMany({
             where : { userId : req.user.id},
             select : {
-                teamHistory : {
-                    include : {
-                        team : {
-                            include : {
-                                projects : true
-                            }
-                        }
+                team : {
+                    include : {                     
+                        projects : true
                     }
+                    
                 }
             }
         })

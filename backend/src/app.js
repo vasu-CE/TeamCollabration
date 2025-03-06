@@ -7,6 +7,8 @@ import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import facultyRoutes from "./routes/faculty.routes.js";
 import cors from "cors";
+import bcrypt from "bcrypt"
+import prisma from "./utils/prismClient.js";
 
 dotenv.config();
 const app = express();
@@ -47,7 +49,6 @@ app.use("/faculty" , facultyRoutes);
 //           institute: "CSPIT",
 //           Admin: {
 //             create: {
-//               resetId: 1,
 //               department: "CE",
 //             },
 //           },
@@ -65,8 +66,9 @@ app.use("/faculty" , facultyRoutes);
 //   }
 // }
 
-// // Run the function
+// Run the function
 // createDefaultAdmin();
+
 
 const PORT = process.env.PORT || 3000
 
