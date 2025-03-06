@@ -50,6 +50,9 @@ model User {
   Student    Student[]  @relation("StudentRef")
   Faculty    Faculty[]  @relation("FacultyRef")
   Admin      Admin[]    @relation("AdminRef")
+
+  messagesSent     Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
 }
 
 model Student {
@@ -76,8 +79,19 @@ model Team {
   teamCode      String      @unique
   JoinRequest   JoinRequest[]
   projects      Project[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+}
+
+model StudentTeamHistory {
+  id        String   @id @unique @default(uuid())
+  student Student @relation(fields: [studentId], references: [id])
+  studentId String
+  team    Team    @relation("TeamStudents", fields: [teamId], references: [id])
+  teamId    String
+  resetId   Int
+  joinedAt  DateTime @default(now())
+
+
+  @@unique([studentId, teamId, resetId])
 }
 
 model JoinRequest {
@@ -145,4 +159,3 @@ model Evaluation {
   facultyId      Int
   evaluationDate DateTime @default(now())
 }
- 

@@ -205,26 +205,32 @@ export const rejectJoinRequest = async (req , res) => {
         return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
     }
 }
+export const joinTeam = async (req, res) => {
+    if (!req.user || !req.user.id) {
+        return res.status(401).json({ success: false, message: "Unauthorized: Session expired" });
+    }
 
-export const joinTeam = async (req , res) => {
     const { teamCode } = req.body;
 
-    try{
-        const team = await prisma.team.findFirst({
-            where : { teamCode }
-        })
+    try {
+        const team = await prisma.team.findFirst({ where: { teamCode } });
 
-        if(!team){
-            return res.status(404).json(new ApiError(404 , "Wrong team Code"));
+        if (!team) {
+            return res.status(404).json({ success: false, message: "Wrong team code" });
         }
 
-        if(team.teamCount >= 4){
-            return res.status(403).json(new ApiError(403 , "Team size is FULL"));
+        if (team.studentsCount >= 4) {
+            return res.status(403).json({ success: false, message: "Team size is FULL" });
         }
 
-        const student = await prisma.student.findFirst({
-            where : { userId : req.user.id }
-        })
+        const student = await prisma.student.findFirst({ where: { userId: req.user.id } });
+
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+
+        // DEBUG LOG
+        console.log("Checking for existing membership:", { studentId: student.id, resetId: student.resetId });
 
         await prisma.team.update({
             where : { id : team.id },
@@ -239,13 +245,13 @@ export const joinTeam = async (req , res) => {
         })
 
 
-        
-        return res.status(200).json(new ApiResponse(200 , "Joined the team successfullyx"));
-        
-    }catch(err){
-        return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
+        return res.status(200).json({ success: true, message: "Joined the team successfully" });
+
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message || "Internal Server Error" });
     }
-}
+};
+
 
 export const createProject = async (req , res) => {
    try{

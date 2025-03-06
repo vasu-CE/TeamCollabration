@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Phone, Video, Mic, Smile, Image, Send } from 'lucide-react';
 import Sidebar from './SideBar';
 
+
 import img from "../assets/maitrik.jpg";
 
 const ChatInterface = () => {

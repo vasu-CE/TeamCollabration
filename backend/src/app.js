@@ -9,6 +9,7 @@ import facultyRoutes from "./routes/faculty.routes.js";
 import cors from "cors";
 import bcrypt from "bcrypt"
 import prisma from "./utils/prismClient.js";
+import messageRoutes from "./routes/message.routes.js";
 
 dotenv.config();
 const app = express();
@@ -29,6 +30,7 @@ app.use("/users" , userRoutes);
 app.use("/students" , studentRoutes);
 app.use("/admin" , adminRoutes);
 app.use("/faculty" , facultyRoutes);
+app.use("/messages", messageRoutes);
 
 // async function createDefaultAdmin() {
 //   try {
