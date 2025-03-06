@@ -71,7 +71,6 @@ app.use("/messages", messageRoutes);
 // Run the function
 // createDefaultAdmin();
 
-
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT , () => {

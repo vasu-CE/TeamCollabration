@@ -300,6 +300,21 @@ export const createProject = async (req , res) => {
    }
 }
 
+export const getRequest = async (req , res) => {
+    try{
+        const authorId = req.user.id;
+        const author = await prisma.student.findFirst({
+            where : { userId : authorId }
+        })
+        const requests = await prisma.joinRequest.findMany({
+            where : { studentId : author.id}
+        })
+        return res.status(200).json(new ApiError(200 , "Requests" , requests))
+    }catch(err){
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server"));
+    }
+}
+
 export const getTeamWithProjects = async (req, res) => {
     try {
         const { teamId } = req.params;  
@@ -324,14 +339,13 @@ export const getTeamWithProjects = async (req, res) => {
 
 export const getTeams = async (req , res) => {
     try{
-        const students = await prisma.student.findMany({
+        const students = await prisma.student.findFirst({
             where : { userId : req.user.id},
             select : {
                 team : {
                     include : {                     
                         projects : true
                     }
-                    
                 }
             }
         })
