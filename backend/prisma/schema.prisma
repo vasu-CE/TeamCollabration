@@ -56,42 +56,30 @@ model User {
 }
 
 model Student {
-  id                 String       @id @unique @default(uuid())
-  user               User         @relation("StudentRef", fields: [userId], references: [id])
-  userId             String       @unique
+  id                 String        @id @unique @default(uuid())
+  user               User          @relation("StudentRef", fields: [userId], references: [id])
+  userId             String        @unique
   current_study_year String
   passing_year       String
   batch              String
-  marks              Mark?        @relation("StudentMarks")
-  evaluations        Evaluation[] @relation("StudentEvaluations")
+  marks              Mark?         @relation("StudentMarks")
+  evaluations        Evaluation[]  @relation("StudentEvaluations")
   JoinRequest        JoinRequest[]
-  teams              Team[]       // Many-to-many relation with Team
-  leaderOf           Team?        @relation("TeamLeader")
+  teams              Team[] // Many-to-many relation with Team
+  leaderOf           Team?         @relation("TeamLeader")
 }
 
 model Team {
-  id            String      @id @unique @default(uuid())
+  id            String        @id @unique @default(uuid())
   name          String
-  leader        Student?    @relation("TeamLeader", fields: [leaderId], references: [id])
-  leaderId      String?     @unique
-  students      Student[]   // Many-to-many relation with Student
-  studentsCount Int         @default(0)
-  teamCode      String      @unique
+  leader        Student?      @relation("TeamLeader", fields: [leaderId], references: [id])
+  leaderId      String?       @unique
+  students      Student[] // Many-to-many relation with Student
+  studentsCount Int           @default(0)
+  teamCode      String        @unique
   JoinRequest   JoinRequest[]
   projects      Project[]
-}
-
-model StudentTeamHistory {
-  id        String   @id @unique @default(uuid())
-  student Student @relation(fields: [studentId], references: [id])
-  studentId String
-  team    Team    @relation("TeamStudents", fields: [teamId], references: [id])
-  teamId    String
-  resetId   Int
-  joinedAt  DateTime @default(now())
-
-
-  @@unique([studentId, teamId, resetId])
+  Message       Message[] @relation("TeamMessages")
 }
 
 model JoinRequest {
@@ -105,20 +93,20 @@ model JoinRequest {
 }
 
 model Project {
-  id          Int       @id @unique @default(autoincrement())
+  id          Int      @id @unique @default(autoincrement())
   title       String
   description String
   technology  String[]
   status      Status
-  gitHubLink  String    @default("")
-  team        Team      @relation(fields: [teamId], references: [id])
+  gitHubLink  String   @default("")
+  team        Team     @relation(fields: [teamId], references: [id])
   teamId      String
-  isUnderSgp  Boolean   @default(false)
+  isUnderSgp  Boolean  @default(false)
   // For SGP projects, a non-null semester (e.g. "Fall 2025") must be provided.
   // Normal projects should leave this as null.
   semester    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // This composite unique constraint enforces that, for any given team,
   // only one project per semester can have a non-null semester value.
@@ -158,4 +146,17 @@ model Evaluation {
   faculty        Faculty  @relation(fields: [facultyId], references: [id])
   facultyId      Int
   evaluationDate DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @unique @default(uuid())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId String
+  team       Team     @relation("TeamMessages", fields: [teamId], references: [id]) // Corrected relation
+  teamId     String // Ensures messages are linked to a team
+  text       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
