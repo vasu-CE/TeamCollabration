@@ -230,7 +230,7 @@ export const joinTeam = async (req, res) => {
         }
 
         // DEBUG LOG
-        console.log("Checking for existing membership:", { studentId: student.id, resetId: student.resetId });
+        // console.log("Checking for existing membership:", { studentId: student.id, resetId: student.resetId });
 
         await prisma.team.update({
             where : { id : team.id },
@@ -255,12 +255,12 @@ export const joinTeam = async (req, res) => {
 
 export const createProject = async (req , res) => {
    try{
-    const { projectName , description , technology ,gitHubLink } = req.body;
+    const { title, description, technology , gitHubLink, isUnderSgp, semester } = req.body;
 
-    if(!projectName || !description || !technology){
+    if(!title || !description || !technology){
         return res.status(404).json(new ApiError(404 , "Info is missing"));
     }
-
+    
     const leader = await prisma.student.findFirst({
         where : { userId : req.user.id}
     })
@@ -270,12 +270,16 @@ export const createProject = async (req , res) => {
     })
 
     if(!team){
-        return res.status(404).json(new ApiError(404 , "Team is not found"));
+        return res.status(404).json(new ApiError(404 , "You can't create a project"));
+    }
+
+    if (isUnderSgp && semester) {
+        return res.status(400).json({ error: "SGP projects require a semester value." });
     }
 
     const project = await prisma.project.create({
         data : {
-            title : projectName,
+            title,
             description,
             technology,
             status : "IN_PROGRESS",
@@ -284,7 +288,9 @@ export const createProject = async (req , res) => {
                 connect : {
                     id : team.id
                 }
-            }
+            },
+            isUnderSgp,
+            semester : isUnderSgp ? semester : null
         }
     })
 
