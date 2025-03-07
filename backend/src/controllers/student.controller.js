@@ -12,7 +12,7 @@ export const createTeam = async (req , res) => {
         const leader = await prisma.student.findFirst({
             where : { userId : req.user.id }
         })
-
+       
         const team = await prisma.team.create({
             data : {
                 teamCode : teamCode,
@@ -28,7 +28,7 @@ export const createTeam = async (req , res) => {
                 studentsCount : 1
             }
         })
-
+        
         return res.status(200).json(new ApiResponse(200 , "Team Created Successfully" ,team ));        
     }catch(err){
         res.status(500).json(new ApiError(500 , err.message || "Internal Server error"));
@@ -330,7 +330,7 @@ export const getTeamWithProjects = async (req, res) => {
             return res.status(404).json(new ApiError(404, "Team not found"));
         }
 
-        return res.status(200).json({ success: true, team });
+        return res.status(200).json(new ApiResponse(200 , team));
 
     } catch (error) {
         return res.status(500).json(new ApiError(500, error.message || "Internal Server Error"));
@@ -338,20 +338,40 @@ export const getTeamWithProjects = async (req, res) => {
 };
 
 export const getTeams = async (req , res) => {
+    // console.log(req.user.id)
     try{
-        const students = await prisma.student.findFirst({
-            where : { userId : req.user.id},
-            select : {
-                team : {
-                    include : {                     
-                        projects : true
+        const teams = await prisma.team.findMany({
+            where : {
+                students : {
+                    some : {
+                        userId : req.user.id
                     }
+                },
+            },
+            include :{
+                students : {
+                    include : { user : true}
                 }
             }
-        })
+        }) 
+        // console.log(teams)
 
-        return res.status(200).json(new ApiResponse(500 , {} , students))
+        return res.status(200).json(new ApiResponse(200 , {} , teams))
     }catch(err){
         return res.status(500).json(new ApiError(500 , err.message))
+    }
+}
+
+export const getProjects = async (req , res) => {
+    try{
+        const { projectId } = req.params;
+        const projects = await prisma.project.findMany({
+            projectId
+        })
+
+        return res.status(200).json(new ApiResponse(200 , {}, projects))
+
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server Error"))
     }
 }

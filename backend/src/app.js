@@ -32,41 +32,41 @@ app.use("/admin" , adminRoutes);
 app.use("/faculty" , facultyRoutes);
 app.use("/messages", messageRoutes);
 
-// async function createDefaultAdmin() {
-//   try {
-//     const existingAdmin = await prisma.user.findFirst({
-//       where: { email: "admin@example.com" },
-//     });
+async function createDefaultAdmin() {
+  try {
+    const existingAdmin = await prisma.user.findFirst({
+      where: { email: "admin@example.com" },
+    });
 
-//     if (!existingAdmin) {
-//       const hashedPassword = await bcrypt.hash("Admin@123", 10); // 🔒 Secure password
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash("Admin@123", 10); // 🔒 Secure password
 
-//       const adminUser = await prisma.user.create({
-//         data: {
-//           email: "admin@example.com",
-//           name: "Default Admin",
-//           password: hashedPassword,
-//           role: "ADMIN",
-//           department: "CE",
-//           institute: "CSPIT",
-//           Admin: {
-//             create: {
-//               department: "CE",
-//             },
-//           },
-//         },
-//       });
+      const adminUser = await prisma.user.create({
+        data: {
+          email: "admin@example.com",
+          name: "Default Admin",
+          password: hashedPassword,
+          role: "ADMIN",
+          department: "CE",
+          institute: "CSPIT",
+          Admin: {
+            create: {
+              department: "CE",
+            },
+          },
+        },
+      });
 
-//       console.log("✅ Default Admin created successfully:", adminUser);
-//     } else {
-//       console.log("⚠️ Admin already exists!");
-//     }
-//   } catch (error) {
-//     console.error("❌ Error creating admin:", error);
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
+      console.log("✅ Default Admin created successfully:", adminUser);
+    } else {
+      console.log("⚠️ Admin already exists!");
+    }
+  } catch (error) {
+    console.error("❌ Error creating admin:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
 // Run the function
 // createDefaultAdmin();

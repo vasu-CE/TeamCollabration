@@ -80,6 +80,7 @@ model Team {
   JoinRequest   JoinRequest[]
   projects      Project[]
   Message       Message[] @relation("TeamMessages")
+  updatedAt DateTime @updatedAt
 }
 
 model JoinRequest {
