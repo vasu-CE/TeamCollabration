@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Phone, Video, Mic, Smile, Image, Send } from 'lucide-react';
-import Sidebar from './SideBar';
+
+import ChatSidebar from '@/components/chatSidebar';
 
 
 import img from "../assets/maitrik.jpg";
@@ -58,7 +59,7 @@ const ChatInterface = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <Sidebar />
+      <ChatSidebar/>
 
       {/* Chat List */}
       <div className="w-80 border-r flex flex-col bg-white">

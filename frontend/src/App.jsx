@@ -1,5 +1,5 @@
 import { Route,Routes } from "react-router-dom";
-import TeamDashboard from "./components/TeamDashboard";
+import Dashboard from "./page/Dashboard";
 import Login from "./components/login";
 import Temp from "./components/temp";
 import TeamsPage from "./components/Teams";

@@ -315,23 +315,32 @@ export const getTeamWithProjects = async (req, res) => {
         return res.status(500).json(new ApiError(500, error.message || "Internal Server Error"));
     }
 };
-
-export const getTeams = async (req , res) => {
-    try{
-        const students = await prisma.student.findMany({
-            where : { userId : req.user.id},
-            select : {
-                team : {
-                    include : {                     
-                        projects : true
-                    }
-                    
-                }
-            }
-        })
-
-        return res.status(200).json(new ApiResponse(500 , {} , students))
-    }catch(err){
-        return res.status(500).json(new ApiError(500 , err.message))
+export const getTeams = async (req, res) => {
+    try {
+      const student = await prisma.student.findUnique({
+        where: { userId: req.user.id }, 
+        include: {
+          teams: {
+            include: {
+              students: {
+                include: {
+                  user: true, // Fetch user details
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      if (!student) {
+        return res.status(404).json({ success: false, message: "Student not found" });
+      }
+  
+      console.log("Fetched teams:", student.teams); // Debug log
+      return res.status(200).json({ success: true, teams: student.teams });
+    } catch (err) {
+      console.error("Error fetching teams:", err);
+      return res.status(500).json({ success: false, message: err.message });
     }
-}
+  };
+  

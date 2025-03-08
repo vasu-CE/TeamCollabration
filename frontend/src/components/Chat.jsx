@@ -3,7 +3,7 @@ import socket from "../lib/socket";
 import axios from "axios";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
-import Sidebar from "./Sidebar";
+import Sidebar from "./chatSidebar";
 
 const Chat = () => {
   const [chatUser, setChatUser] = useState(null);

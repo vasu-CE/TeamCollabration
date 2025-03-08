@@ -34,8 +34,8 @@ export default function LoginPage() {
       if (response.data.success) {
         // console.log(response.data.message)
         toast.success(`Welcome ${response.data.message.name}`);
-        dispatch(setUser(response.data.message));
-
+        // dispatch(setUser(response.data.message));
+        dispatch(setUser({ userId: response.data.message.id, name: response.data.message.name }));
         navigate("/dashboard")
       }
     } catch (err) {
@@ -103,4 +103,6 @@ export default function LoginPage() {
     </div>
   )
 }
+
+
 

@@ -3,6 +3,7 @@ import userReducer from "./userSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Use localStorage as the default storage
 import { combineReducers } from "redux";
+import teamReducer from "./teamSlice"
 
 // Configure persist settings
 const persistConfig = {
@@ -13,6 +14,7 @@ const persistConfig = {
 // Combine reducers (in case you add more reducers later)
 const rootReducer = combineReducers({
   user: userReducer,
+  team: teamReducer,
 });
 
 // Create a persisted reducer
