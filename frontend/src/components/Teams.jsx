@@ -8,6 +8,8 @@ import Sidebar from "../page/SideBar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import CreateJoinTeam from "./CreateJoinTeam";
 import { HOME_API } from "@/lib/constant";  // Import the constant API base URL
+import axios from "axios";
+import { toast } from "sonner";
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState([]);
@@ -15,10 +17,13 @@ export default function TeamsPage() {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await fetch(`${HOME_API}/students/create-teams`);
-        if (!response.ok) throw new Error("Failed to fetch teams");
-        const data = await response.json();
-        setTeams(data);
+        const response = await axios.get(`${HOME_API}/students/get-teams`, {
+          withCredentials: true, 
+        });
+        if (!response.data.success) toast.error("Failed to fetch teams");
+        // {console.log(response.data)}
+        // const data = await response.json();
+        setTeams(response.data.message);
       } catch (error) {
         console.error("Error fetching teams:", error);
       }
@@ -58,20 +63,20 @@ export default function TeamsPage() {
         </div>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
+          {teams?.map((team) => (
             <Card key={team.id}>
               <CardHeader>
                 <CardTitle>{team.name}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex -space-x-2">
-                  {team.members.map((member, i) => (
+                  {team?.students?.map((student, i) => (
                     <Avatar key={i} className="border-2 border-gray-200">
-                      <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
+                      <AvatarImage src={student?.avatar || "/placeholder.svg"} alt={student.user.name} />
                       <AvatarFallback>
-                        {member.name
+                        {student.user.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n) => n[0].toUpperCase())
                           .join("")}
                       </AvatarFallback>
                     </Avatar>

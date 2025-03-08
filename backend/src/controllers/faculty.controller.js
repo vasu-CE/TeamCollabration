@@ -80,3 +80,62 @@ export const deleteStudents = async (req , res) => {
         return res.status(500).json(new ApiError(500 , err.message || "Internal Server error"))
     }
 }
+
+export const getTeams = async (req , res) => {
+    try{
+        console.log(req.user.id)
+        const faculty = await prisma.faculty.findFirst({
+            where : { userId : req.user.id}
+        })
+        const teams = await prisma.team.findMany({
+            where : {
+                institute : faculty.institute,
+                department :faculty.department
+            },
+            include : {
+                students : {
+                    include : { user : true } 
+                }
+            }
+        })
+
+        return res.status(200).json(new ApiResponse(200 , teams));
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message || "Internal Server"));
+    }
+}
+
+export const getTeamProject = async (req , res) => {
+    try{
+        const { teamId } = req.params;
+        
+        const team = await prisma.team.findUnique({
+            where: { id: Number(teamId) },  
+            include: {
+                projects: true
+            }
+        });
+
+        if (!team) {
+            return res.status(404).json(new ApiError(404, "Team not found"));
+        }
+
+        return res.status(200).json(new ApiResponse(200 , team));
+    }catch(err){
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server error"));
+    }
+}
+
+export const getProject = async ( req , res) => {
+    try{
+        const {projectId} = req.params;
+
+        const project = await prisma.project.findFirst({
+            where : { id : projectId}
+        })
+
+        return res.status(200).json(new ApiResponse(200 , project));
+    }catch(err){
+        return res.status(500).json(new ApiError(500 , err.message))
+    }
+}

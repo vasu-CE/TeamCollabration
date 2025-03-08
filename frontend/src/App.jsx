@@ -1,11 +1,12 @@
 import { Route,Routes } from "react-router-dom";
-import Dashboard from "./page/Dashboard";
+// import TeamDashboard from "./components/TeamDashboard";
 import Login from "./components/login";
 import Temp from "./components/temp";
 import TeamsPage from "./components/Teams";
 import TeamDetailPage from "./components/Team";
 import ChatInterface from "./page/ChatInterface";
 import Chat from "./components/Chat";
+import Dashboard from "./page/Dashboard";
 export default function App() {
   return (
     <Routes>
