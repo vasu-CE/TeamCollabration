@@ -61,7 +61,6 @@ model Student {
   userId             String        @unique
   current_study_year String
   passing_year       String
-  
   batch              String
   marks              Mark?         @relation("StudentMarks")
   evaluations        Evaluation[]  @relation("StudentEvaluations")
@@ -81,7 +80,9 @@ model Team {
   JoinRequest   JoinRequest[]
   projects      Project[]
   Message       Message[] @relation("TeamMessages")
+   createdAt  DateTime @default(now()) // Ensure this field exists 
   updatedAt DateTime @updatedAt
+  
 }
 
 model JoinRequest {

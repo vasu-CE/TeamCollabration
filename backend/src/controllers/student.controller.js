@@ -337,31 +337,35 @@ export const getTeamWithProjects = async (req, res) => {
     }
 };
 
-export const getTeams = async (req , res) => {
-    // console.log(req.user.id)
-    try{
-        const teams = await prisma.team.findMany({
-            where : {
-                students : {
-                    some : {
-                        userId : req.user.id
-                    }
+export const getTeams = async (req, res) => {
+    try {
+      const student = await prisma.student.findUnique({
+        where: { userId: req.user.id }, 
+        include: {
+          teams: {
+            include: {
+              students: {
+                include: {
+                  user: true, // Fetch user details
                 },
+              },
             },
-            include :{
-                students : {
-                    include : { user : true}
-                }
-            }
-        }) 
-        // console.log(teams)
-
-        return res.status(200).json(new ApiResponse(200 , {} , teams))
-    }catch(err){
-        return res.status(500).json(new ApiError(500 , err.message))
+          },
+        },
+      });
+  
+      if (!student) {
+        return res.status(404).json({ success: false, message: "Student not found" });
+      }
+  
+      console.log("Fetched teams:", student.teams); // Debug log
+      return res.status(200).json({ success: true, teams: student.teams });
+    } catch (err) {
+      console.error("Error fetching teams:", err);
+      return res.status(500).json({ success: false, message: err.message });
     }
-}
-
+  };
+  
 export const getProjects = async (req , res) => {
     try{
         const { projectId } = req.params;
