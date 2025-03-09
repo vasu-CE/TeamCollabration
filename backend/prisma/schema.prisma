@@ -61,6 +61,7 @@ model Student {
   userId             String        @unique
   current_study_year String
   passing_year       String
+  
   batch              String
   marks              Mark[]         @relation("StudentMarks")
   JoinRequest        JoinRequest[]
