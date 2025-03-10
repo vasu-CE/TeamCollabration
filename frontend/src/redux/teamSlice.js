@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 const initialState = {
   teams: [], // Stores a list of teams
@@ -10,17 +11,25 @@ const teamSlice = createSlice({
   initialState,
   reducers: {
     setTeams: (state, action) => {
-      state.teams = action.payload; // Update the list of teams
+      // console.log("🟢 Setting teams in Redux:", action.payload); // ✅ Debugging
+
+      // Ensure the payload is valid, otherwise default to an empty array
+      state.teams = Array.isArray(action.payload) ? action.payload : [];
+    },
+    appendTeam : (state , action) => {
+      state.teams.push(action.payload);
     },
     selectTeam: (state, action) => {
-      state.selectedTeam = action.payload; // Set the selected team
+      // console.log("🔵 Selecting team:", action.payload); // ✅ Debugging
+      state.selectedTeam = action.payload || [];
     },
     clearTeams: (state) => {
+      // console.log("🟠 Clearing teams from Redux"); // ✅ Debugging
       state.teams = []; // Reset teams on logout or error
       state.selectedTeam = null;
     },
   },
 });
 
-export const { setTeams, selectTeam, clearTeams } = teamSlice.actions;
+export const { setTeams, selectTeam, clearTeams , appendTeam} = teamSlice.actions;
 export default teamSlice.reducer;
