@@ -61,20 +61,12 @@ model Student {
   userId             String @unique
   current_study_year String
   passing_year       String
-<<<<<<< HEAD
-  batch              String
-  marks              Mark[]         @relation("StudentMarks")
-  JoinRequest        JoinRequest[]
-  teams              Team[] // Many-to-many relation with Team
-  leaderOf           Team?         @relation("TeamLeader")
-=======
 
   batch       String
   marks       Mark[]        @relation("StudentMarks")
   JoinRequest JoinRequest[]
   teams       Team[] // Many-to-many relation with Team
   leaderOf    Team[]        @relation("TeamLeader")
->>>>>>> c07346fdb8e8ad16606cb258e32dab01733cb89c
 }
 
 model Team {
