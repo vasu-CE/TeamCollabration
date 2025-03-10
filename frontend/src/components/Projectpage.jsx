@@ -1,43 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { HOME_API } from "@/lib/constant";
 import Sidebar from "../page/SideBar";
 
 const ProjectPage = () => {
-  const user = useSelector((state) => state.user.user);
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({
     title: "",
     description: "",
-    technology: "",
+    technology: [], // Set technology as an array
     gitHubLink: "",
     isUnderSgp: false,
     semester: "",
   });
-
-  // Fetch Projects
-  const fetchProjects = async () => {
-    try {
-      const res = await axios.get(`${HOME_API}/projects`, {
-        withCredentials: true,
-      });
-      if (res.data) {
-        setProjects(res.data);
-      } else {
-        toast.error("Failed to fetch projects");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-
-  };
-
-  useEffect(() => {
-    // fetchProjects();
-  }, []);
 
   // Handle Form Changes
   const handleChange = (e) => {
@@ -48,21 +24,33 @@ const ProjectPage = () => {
     });
   };
 
+  // Handle technology input
+  const handleTechnologyChange = (e) => {
+    const input = e.target.value;
+    // Split the input into an array by commas, removing extra spaces
+    const technologiesArray = input.split(",").map((tech) => tech.trim()).filter(Boolean);
+    setForm({
+      ...form,
+      technology: technologiesArray, // Store as array
+    });
+  };
+
   // Create Project
   const createProject = async () => {
     try {
       const res = await axios.post(
-        `${HOME_API}/students/create-project`,
-        { form },
+        `${HOME_API}/students/create-project/${team.id}`,
+
+        form, // Send the form directly, no need to wrap it in an object
         { withCredentials: true }
       );
-  console.log(res);
+      console.log(res);
       if (res.data.success) {
         toast.success("Project created successfully");
         setForm({
           title: "",
           description: "",
-          technology: "",
+          technology: [], // Reset the technology array
           gitHubLink: "",
           isUnderSgp: false,
           semester: "",
@@ -106,9 +94,9 @@ const ProjectPage = () => {
           <input
             type="text"
             name="technology"
-            placeholder="Technologies Used"
-            value={form.technology}
-            onChange={handleChange}
+            placeholder="Technologies Used (comma separated)"
+            value={form.technology.join(", ")} // Show array as comma-separated string
+            onChange={handleTechnologyChange} // Call the technology change handler
             className="w-full p-2 border rounded-md mb-3"
           />
           <input
@@ -162,7 +150,7 @@ const ProjectPage = () => {
                   {project.title}
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
-                  Technologies: <span className="font-bold">{project.technology}</span>
+                  Technologies: <span className="font-bold">{project.technology.join(", ")}</span>
                 </p>
                 <p className="text-gray-700">{project.description}</p>
                 {project.gitHubLink && (

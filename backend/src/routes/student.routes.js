@@ -11,7 +11,7 @@ router.get('/send-request/:studentId' , isAuthenticated , sendJoinRequest);
 router.get('/accept-request/:requestId' , isAuthenticated , acceptJoinRequest);
 router.get('/reject-request/:requestId' , isAuthenticated , rejectJoinRequest);
 router.post('/join-team' , isAuthenticated , joinTeam);
-router.post('/create-project' , isAuthenticated , createProject);
+router.post('/create-project/:teamId' , isAuthenticated , createProject);
 
 router.get('/get-requests' , isAuthenticated , getRequest);
 

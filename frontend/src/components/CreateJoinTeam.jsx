@@ -4,11 +4,14 @@ import { toast } from "sonner";
 import axios from "axios";
 import { HOME_API } from "@/lib/constant";
 import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux";
+import { appendTeam } from "@/redux/teamSlice";
 
 function CreateJoinTeam() {
   const [name, setName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const createTeamHandeler = async () => {
     try {
@@ -23,7 +26,9 @@ function CreateJoinTeam() {
 
       if (res.data.success) {
         setName("");
-        navigate("./teams")
+        // navigate("/teams")
+        console.log(res.data)
+        dispatch(appendTeam(res.data.message))
 
       } else {
         toast.error(res.data.message);
@@ -42,7 +47,7 @@ function CreateJoinTeam() {
       if (res.data.success) {
         toast.success(res.data.message);
         setTeamCode(""); // ✅ Clear input
-        navigate("./teams")
+        // navigate("./teams")
 
       } else {
         toast.error(res.data.message);

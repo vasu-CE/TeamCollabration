@@ -50,11 +50,11 @@ const TeamMembers = () => {
       <div className="flex-1 p-8 bg-gray-100 overflow-auto">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">🚀 Your Teams</h2>
 
-        {teams.length === 0 ? (
+        {teams?.length === 0 ? (
           <p className="text-center text-gray-500">No teams found.</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teams.map((team) => (
+            {teams?.map((team) => (
               <div key={team.id} className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
                 <h3 className="text-xl font-semibold text-blue-600">{team.name}</h3>
                 <p className="text-gray-500 text-sm mb-4">
@@ -63,8 +63,8 @@ const TeamMembers = () => {
 
                 <h4 className="text-lg font-medium text-gray-700">👥 Members:</h4>
                 <ul className="mt-2">
-                  {team.students.length > 0 ? (
-                    team.students.map((member) => (
+                  {team?.students.length > 0 ? (
+                    team?.students?.map((member) => (
                       <li key={member.id} className="flex items-center gap-2 p-2 bg-gray-100 rounded-md mt-1">
                         <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full">
                           {member.user.name.charAt(0)}

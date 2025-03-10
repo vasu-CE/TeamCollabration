@@ -302,8 +302,9 @@ export const joinTeam = async (req, res) => {
 
 export const createProject = async (req, res) => {
     try {
+        // console.log(req.body)
       const { title, description, technology, gitHubLink, isUnderSgp, semester } = req.body;
-  
+      const {teamId} = req.params
       // Ensure all required fields are provided
       if (!title || !description || !technology) {
         // console.log(title);
@@ -329,7 +330,7 @@ export const createProject = async (req, res) => {
       if (isUnderSgp && !semester) {
         return res.status(400).json({ error: "SGP projects require a semester value." });
       }
-  
+      console.log(team)
       // Create the project
       const project = await prisma.project.create({
         data: {
@@ -339,7 +340,7 @@ export const createProject = async (req, res) => {
           status: "IN_PROGRESS", // Initial status
           gitHubLink: gitHubLink ? gitHubLink.trim() : null, // Trim and ensure not null
           team: {
-            connect: { id: team.id }
+            connect: { id: teamId }
           },
           isUnderSgp,
           semester: isUnderSgp ? semester : null // Only assign semester if SGP

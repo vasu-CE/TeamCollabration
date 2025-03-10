@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 const initialState = {
   teams: [], // Stores a list of teams
@@ -15,6 +16,9 @@ const teamSlice = createSlice({
       // Ensure the payload is valid, otherwise default to an empty array
       state.teams = Array.isArray(action.payload) ? action.payload : [];
     },
+    appendTeam : (state , action) => {
+      state.teams.push(action.payload);
+    },
     selectTeam: (state, action) => {
       // console.log("🔵 Selecting team:", action.payload); // ✅ Debugging
       state.selectedTeam = action.payload || [];
@@ -27,5 +31,5 @@ const teamSlice = createSlice({
   },
 });
 
-export const { setTeams, selectTeam, clearTeams } = teamSlice.actions;
+export const { setTeams, selectTeam, clearTeams , appendTeam} = teamSlice.actions;
 export default teamSlice.reducer;
