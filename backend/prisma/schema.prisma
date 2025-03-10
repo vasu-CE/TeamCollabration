@@ -56,31 +56,32 @@ model User {
 }
 
 model Student {
-  id                 String        @id @unique @default(uuid())
-  user               User          @relation("StudentRef", fields: [userId], references: [id])
-  userId             String        @unique
+  id                 String @id @unique @default(uuid())
+  user               User   @relation("StudentRef", fields: [userId], references: [id])
+  userId             String @unique
   current_study_year String
   passing_year       String
-  
-  batch              String
-  marks              Mark[]         @relation("StudentMarks")
-  JoinRequest        JoinRequest[]
-  teams              Team[] // Many-to-many relation with Team
-  leaderOf           Team?         @relation("TeamLeader")
+
+  batch       String
+  marks       Mark[]        @relation("StudentMarks")
+  JoinRequest JoinRequest[]
+  teams       Team[] // Many-to-many relation with Team
+  leaderOf    Team[]        @relation("TeamLeader")
 }
 
 model Team {
   id            String        @id @unique @default(uuid())
   name          String
   leader        Student?      @relation("TeamLeader", fields: [leaderId], references: [id])
-  leaderId      String?       @unique
+  leaderId      String?
   students      Student[] // Many-to-many relation with Student
   studentsCount Int           @default(0)
   teamCode      String        @unique
   JoinRequest   JoinRequest[]
   projects      Project[]
-  Message       Message[] @relation("TeamMessages")
-  updatedAt DateTime @updatedAt
+  Message       Message[]     @relation("TeamMessages")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model JoinRequest {
@@ -115,9 +116,9 @@ model Project {
 }
 
 model Faculty {
-  id          Int          @id @unique @default(autoincrement())
-  user        User         @relation("FacultyRef", fields: [userId], references: [id])
-  userId      String       @unique
+  id     Int    @id @unique @default(autoincrement())
+  user   User   @relation("FacultyRef", fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Admin {
@@ -128,14 +129,13 @@ model Admin {
 }
 
 model Mark {
-  id          Int          @id @unique @default(autoincrement())
-  internal1   Int
-  internal2   Int?
-  external    Int?
-  student     Student      @relation("StudentMarks", fields: [studentId], references: [id])
-  studentId   String 
+  id        Int     @id @unique @default(autoincrement())
+  internal1 Int
+  internal2 Int?
+  external  Int?
+  student   Student @relation("StudentMarks", fields: [studentId], references: [id])
+  studentId String
 }
-
 
 model Message {
   id         String   @id @unique @default(uuid())
