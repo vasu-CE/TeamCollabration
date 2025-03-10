@@ -253,52 +253,107 @@ export const joinTeam = async (req, res) => {
 };
 
 
-export const createProject = async (req , res) => {
-   try{
-    const { title, description, technology , gitHubLink, isUnderSgp, semester } = req.body;
+// export const createProject = async (req , res) => {
+//    try{
+//     const { title, description, technology , gitHubLink, isUnderSgp, semester } = req.body;
 
-    if(!title || !description || !technology){
-        return res.status(404).json(new ApiError(404 , "Info is missing"));
-    }
+//     if(!title || !description || !technology){
+//         return res.status(404).json(new ApiError(404 , "Info is missing"));
+//     }
     
-    const leader = await prisma.student.findFirst({
-        where : { userId : req.user.id}
-    })
+//     const leader = await prisma.student.findFirst({
+//         where : { userId : req.user.id}
+//     })
 
-    const team = await prisma.team.findFirst({
-        where : { leaderId : leader.id }
-    })
+//     const team = await prisma.team.findFirst({
+//         where : { leaderId : leader.id }
+//     })
 
-    if(!team){
-        return res.status(404).json(new ApiError(404 , "You can't create a project"));
-    }
+//     if(!team){
+//         return res.status(404).json(new ApiError(404 , "You can't create a project"));
+//     }
 
-    if (isUnderSgp && semester) {
+//     if (isUnderSgp && !semester) {
+//         return res.status(400).json({ error: "SGP projects require a semester value." });
+//     }
+
+//     const project = await prisma.project.create({
+//         data : {
+//             title,
+//             description,
+//             technology,
+//             status : "IN_PROGRESS",
+//             gitHubLink : gitHubLink.trim(),
+//             team : {
+//                 connect : {
+//                     id : team.id
+//                 }
+//             },
+//             isUnderSgp,
+//             semester : isUnderSgp ? semester : null
+//         }
+//     })
+
+//     return res.status(200).json(new ApiError(200 , "Project created successfully" , project))
+//    }catch(err){
+//         return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+//    }
+// }
+
+export const createProject = async (req, res) => {
+    try {
+      const { title, description, technology, gitHubLink, isUnderSgp, semester } = req.body;
+  
+      // Ensure all required fields are provided
+      if (!title || !description || !technology) {
+        // console.log(title);
+        return res.status(400).json(new ApiError(400, "Required information is missing"));
+      }
+  
+      // Fetch the team leader based on the user ID
+      const leader = await prisma.student.findFirst({
+        where: { userId: req.user.id }
+      });
+  
+      // Find the team led by the current user
+      const team = await prisma.team.findFirst({
+        where: { leaderId: leader.id }
+      });
+  
+      // If no team is found, prevent project creation
+      if (!team) {
+        return res.status(404).json(new ApiError(404, "You can't create a project without a team"));
+      }
+  
+      // Validate the semester value for SGP projects
+      if (isUnderSgp && !semester) {
         return res.status(400).json({ error: "SGP projects require a semester value." });
-    }
-
-    const project = await prisma.project.create({
-        data : {
-            title,
-            description,
-            technology,
-            status : "IN_PROGRESS",
-            gitHubLink : gitHubLink.trim(),
-            team : {
-                connect : {
-                    id : team.id
-                }
-            },
-            isUnderSgp,
-            semester : isUnderSgp ? semester : null
+      }
+  
+      // Create the project
+      const project = await prisma.project.create({
+        data: {
+          title,
+          description,
+          technology,
+          status: "IN_PROGRESS", // Initial status
+          gitHubLink: gitHubLink ? gitHubLink.trim() : null, // Trim and ensure not null
+          team: {
+            connect: { id: team.id }
+          },
+          isUnderSgp,
+          semester: isUnderSgp ? semester : null // Only assign semester if SGP
         }
-    })
-
-    return res.status(200).json(new ApiError(200 , "Project created successfully" , project))
-   }catch(err){
-        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
-   }
-}
+      });
+  
+      // Respond with success
+      return res.status(200).json(new ApiError(200, "Project created successfully", project));
+    } catch (err) {
+      // Handle server error
+      return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+    }
+  };
+  
 
 export const getRequest = async (req , res) => {
     try{

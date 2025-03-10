@@ -10,7 +10,7 @@ router.post('/create-team', isAuthenticated , createTeam);
 router.get('/send-request/:studentId' , isAuthenticated , sendJoinRequest);
 router.get('/accept-request/:requestId' , isAuthenticated , acceptJoinRequest);
 router.get('/reject-request/:requestId' , isAuthenticated , rejectJoinRequest);
-router.get('/join-team' , isAuthenticated , joinTeam);
+router.post('/join-team' , isAuthenticated , joinTeam);
 router.post('/create-project' , isAuthenticated , createProject);
 
 router.get('/get-requests' , isAuthenticated , getRequest);

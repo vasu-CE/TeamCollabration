@@ -3,10 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { toast } from "sonner";
 import axios from "axios";
 import { HOME_API } from "@/lib/constant";
+import { useNavigate } from "react-router-dom"
 
 function CreateJoinTeam() {
   const [name, setName] = useState("");
   const [teamCode, setTeamCode] = useState("");
+  const navigate = useNavigate();
 
   const createTeamHandeler = async () => {
     try {
@@ -20,7 +22,9 @@ function CreateJoinTeam() {
       );
 
       if (res.data.success) {
-        toast.success(res.data.message);
+        setName("");
+        navigate("./teams")
+
       } else {
         toast.error(res.data.message);
       }
@@ -28,29 +32,27 @@ function CreateJoinTeam() {
       toast.error(err.response?.data?.message || "An error occurred");
     }
   };
-
   const joinTeamHandeler = async () => {
     try {
-      const res = await axios.get(
-        `${HOME_API}/students/join-team`,
-        { teamCode },
-        {
-          withCredentials: true,
-        }
-      );
-
+      const res = await axios.post(`${HOME_API}/students/join-team`, 
+        { teamCode }, 
+       { withCredentials: true,  // ✅ Ensures cookies/tokens are sent
+      });
+  
       if (res.data.success) {
         toast.success(res.data.message);
+        setTeamCode(""); // ✅ Clear input
+        navigate("./teams")
 
-        setTeamCode("");
       } else {
         toast.error(res.data.message);
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.message || "Unauthorized access");
+      console.error("🔴 Join Team Error:", err.response || err);
     }
   };
-
+  
   return (
     <div>
       <Tabs defaultValue="create-team" className="w-[full] max-w-2xl">

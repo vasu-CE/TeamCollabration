@@ -10,27 +10,43 @@ import CreateJoinTeam from "./CreateJoinTeam";
 import { HOME_API } from "@/lib/constant";  // Import the constant API base URL
 import axios from "axios";
 import { toast } from "sonner";
+import { setTeams, clearTeams } from "@/redux/teamSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState([]);
+  // const [teams, setTeams] = useState([]);
+   const dispatch = useDispatch();
+    const teams = useSelector((state) => state.team.teams); // Get teams from Redux
+    const user = useSelector((state) => state.user.user); // Get user from Redux
+    const userId = user?.id; // Extract user ID safely
+  
 
   useEffect(() => {
     const fetchTeams = async () => {
+      if (!userId) {
+        toast.error("User ID is missing.");
+        return;
+      }
+  
       try {
-        const response = await axios.get(`${HOME_API}/students/get-teams`, {
-          withCredentials: true, 
+        const res = await axios.get(`${HOME_API}/students/get-teams`, {
+          withCredentials: true,
         });
-        if (!response.data.success) toast.error("Failed to fetch teams");
-        // {console.log(response.data)}
-        // const data = await response.json();
-        setTeams(response.data.message);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
+  
+        if (res.data.success) {
+          dispatch(setTeams(res.data.message)); // Store teams in Redux
+        } else {
+          toast.error(res.data.message);
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to fetch teams");
       }
     };
-
     fetchTeams();
-  }, []);
+     return () => {
+          dispatch(clearTeams()); // Clear teams on component unmount
+        };
+  }, [userId]);
 
   return (
     <div className="flex min-h-screen">
