@@ -356,20 +356,45 @@ export const createProject = async (req, res) => {
   };
   
 
-export const getRequest = async (req , res) => {
-    try{
-        const authorId = req.user.id;
+  export const getRequest = async (req, res) => {
+    try {
+        const authorId = req.user?.id;
+        if (!authorId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
         const author = await prisma.student.findFirst({
-            where : { userId : authorId }
-        })
+            where: { userId: authorId },
+        });
+
+        if (!author) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+
         const requests = await prisma.joinRequest.findMany({
-            where : { studentId : author.id}
-        })
-        return res.status(200).json(new ApiError(200 , "Requests" , requests))
-    }catch(err){
-        return res.status(500).json(new ApiError(500, err.message || "Internal Server"));
+            where: { studentId: author.id },
+            include: {
+                team: { select: { id: true, name: true } }, // Include team details
+            },
+        });
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Requests retrieved", 
+            data: requests.map(request => ({
+                id: request.id,
+                teamId: request.teamId,
+                teamName: request.team?.name || "Unknown Team",  // Add team name
+                status: request.status,
+                createdAt: request.createdAt
+            }))
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message || "Internal Server Error" });
     }
-}
+};
+
+
 
 export const getTeamWithProjects = async (req, res) => {
     try {
@@ -379,8 +404,13 @@ export const getTeamWithProjects = async (req, res) => {
         const team = await prisma.team.findUnique({
             where: { id: teamId },  
             include: {
-                projects: true
+                projects: true,
+                students: {      // Fetch students associated with the team
+                    include: {
+                        user: true, // Include user details (if user entity exists)
+                    },}
             }
+           
         });
        
         if (!team) {
@@ -451,3 +481,66 @@ export const leaderIdToUserId = async (req, res) => {
         return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
     }
 };
+
+export const removeStudent = async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        // Find the leader based on the logged-in user
+        const leader = await prisma.student.findFirst({
+            where: { userId: req.user.id }
+        });
+
+        if (!leader) {
+            return res.status(403).json(new ApiError(403, "You are not authorized"));
+        }
+
+        // Find the team led by the leader
+        const team = await prisma.team.findFirst({
+            where: { leaderId: leader.id },
+            include: { students: true }
+        });
+
+        if (!team) {
+            return res.status(404).json(new ApiError(404, "You do not have a team"));
+        }
+
+        // Prevent leader from removing themselves
+        if (team.leaderId === studentId) {
+            return res.status(403).json(new ApiError(403, "Leader cannot remove themselves"));
+        }
+
+        // Check if the student exists
+        const student = await prisma.student.findUnique({
+            where: { id: studentId }
+        });
+
+        if (!student) {
+            return res.status(404).json(new ApiError(404, "Student not found"));
+        }
+
+        // Ensure the student is a member of the team
+        const isMember = team.students.some(s => s.id === student.id);
+        if (!isMember) {
+            return res.status(400).json(new ApiError(400, "Student is not part of the team"));
+        }
+
+        // Remove the student and decrement the studentsCount
+        await prisma.team.update({
+            where: { id: team.id },
+            data: {
+                students: {
+                    disconnect: { id: student.id } // Remove student from the many-to-many relation
+                },
+                studentsCount: {
+                    decrement: 1 // Ensure the studentsCount is decremented
+                }
+            }
+        });
+
+        return res.status(200).json(new ApiResponse(200, "Student removed successfully"));
+    } catch (err) {
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+    }
+};
+

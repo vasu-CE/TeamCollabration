@@ -23,7 +23,6 @@ export default function LoginPage() {
   // Load user from localStorage when the component mounts
   useEffect(() => {
     dispatch(loadUserFromStorage());
-    if (isAuthenticated) navigate("/dashboard");
   }, [isAuthenticated, dispatch, navigate]);
 
   const handleInputChange = (e) => {
