@@ -1,6 +1,6 @@
 import express from "express"
 
-import { acceptJoinRequest,getProjects ,createProject, createTeam, getRequest, getTeams, getTeamWithProjects, joinTeam, rejectJoinRequest, sendJoinRequest } from "../controllers/student.controller.js";
+import {leaderIdToUserId, acceptJoinRequest,getProjects ,createProject, createTeam, getRequest, getTeams, getTeamWithProjects, joinTeam, rejectJoinRequest, sendJoinRequest } from "../controllers/student.controller.js";
 import isAuthenticated from "../middlewares/Authentication.js";
 
 const router = express.Router();
@@ -18,6 +18,7 @@ router.get('/get-requests' , isAuthenticated , getRequest);
 router.get('/get-teams', isAuthenticated , getTeams);
 router.get('/get-team/:teamId' , isAuthenticated , getTeamWithProjects);
 router.get('/get-project/:projectId' , isAuthenticated , getProjects)
+router.get('/get-leaderIdToUserId/:leaderId',isAuthenticated,leaderIdToUserId)
 
 // router.get('/add-member' , isAuthenticated , addMember)
 

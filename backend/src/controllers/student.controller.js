@@ -374,14 +374,15 @@ export const getRequest = async (req , res) => {
 export const getTeamWithProjects = async (req, res) => {
     try {
         const { teamId } = req.params;  
+      
 
         const team = await prisma.team.findUnique({
-            where: { id: Number(teamId) },  
+            where: { id: teamId },  
             include: {
                 projects: true
             }
         });
-
+       
         if (!team) {
             return res.status(404).json(new ApiError(404, "Team not found"));
         }
@@ -431,3 +432,22 @@ export const getProjects = async (req , res) => {
         return res.status(500).json(new ApiError(500 , err.message || "Internal Server Error"))
     }
 }
+
+export const leaderIdToUserId = async (req, res) => {
+    try {
+        const { leaderId } = req.params;
+
+        const leader = await prisma.student.findUnique({
+            where: { id: leaderId },
+            select: { userId: true }
+        });
+
+        if (!leader) {
+            return res.status(404).json(new ApiError(404, "Leader not found"));
+        }
+
+        return res.status(200).json(new ApiResponse(200, "User ID fetched successfully", leader));
+    } catch (err) {
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+    }
+};

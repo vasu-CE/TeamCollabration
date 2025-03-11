@@ -7,6 +7,7 @@ import ProjectPage from "./components/Projectpage";
 import ChatInterface from "./page/ChatInterface";
 import Chat from "./components/Chat";
 import Dashboard from "./page/Dashboard";
+import TeamDetailsPage from "./components/Teamdetails";
 export default function App() {
   return (
     <Routes>
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/projects" element = {<ProjectPage />} />
       <Route path="/chat" element = {<ChatInterface />} />
       <Route path="/chatnew" element = {<Chat />} />
+      <Route path="/team/:id" element = {<TeamDetailsPage />} />
       
     </Routes>
   );
