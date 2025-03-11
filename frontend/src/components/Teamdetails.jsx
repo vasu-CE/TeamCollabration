@@ -123,7 +123,7 @@ export default function TeamDetailsPage() {
   console.log(isTeamLeader);
 
   return (
-    <>
+    <div className="flex min-h-screen">
     <Sidebar />
       <div className="p-8">
         <h1 className="text-4xl font-bold">{team.name}</h1>
@@ -218,6 +218,6 @@ export default function TeamDetailsPage() {
           </Dialog>
         )}
       </div>
-    </>
+    </div>
   );
 }
