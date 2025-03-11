@@ -1,52 +1,56 @@
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import axios from "axios"
-import { HOME_API } from "@/lib/constant"
-import { toast } from "sonner"
-import { useDispatch } from "react-redux"
-import { setUser } from "@/redux/userSlice"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import axios from "axios";
+import { HOME_API } from "@/lib/constant";
+import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, loadUserFromStorage } from "@/redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({
     identifier: "",
     password: "",
-  })
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.user);
+
+  // Load user from localStorage when the component mounts
+  useEffect(() => {
+    dispatch(loadUserFromStorage());
+    if (isAuthenticated) navigate("/dashboard");
+  }, [isAuthenticated, dispatch, navigate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setLoginData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${HOME_API}/auth/login`, loginData , {
-            withCredentials: true 
+      const response = await axios.post(`${HOME_API}/auth/login`, loginData, {
+        withCredentials: true,
       });
-  
+
       if (response.data.success) {
-        // console.log(response.data.message)
-        dispatch(setUser({ userId: response.data.message.id, name: response.data.message.name }));
+        dispatch(setUser(response.data.message));
         toast.success(`Welcome ${response.data.message.name}`);
-        // dispatch(setUser(response.data.message));
-        navigate("/dashboard")
+        navigate("/dashboard");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
     }
   };
-  
-  
+
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -101,8 +105,5 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
-
-
-

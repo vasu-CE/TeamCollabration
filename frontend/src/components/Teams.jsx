@@ -12,6 +12,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { setTeams, clearTeams } from "@/redux/teamSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function TeamsPage() {
   // const [teams, setTeams] = useState([]);
@@ -19,6 +20,7 @@ export default function TeamsPage() {
     const teams = useSelector((state) => state.team.teams); // Get teams from Redux
     const user = useSelector((state) => state.user.user); // Get user from Redux
     const userId = user?.id; // Extract user ID safely
+    const navigate = useNavigate();
   
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export default function TeamsPage() {
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {teams?.map((team) => (
-            <Card key={team.id}>
+            <Card key={team.id} onClick={() => navigate(`/team/${team.id}`)}>
               <CardHeader>
                 <CardTitle>{team.name}</CardTitle>
               </CardHeader>

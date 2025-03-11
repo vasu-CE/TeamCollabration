@@ -44,7 +44,7 @@ const ProjectPage = () => {
         form, // Send the form directly, no need to wrap it in an object
         { withCredentials: true }
       );
-      console.log(res);
+      // console.log(res);
       if (res.data.success) {
         toast.success("Project created successfully");
         setForm({
