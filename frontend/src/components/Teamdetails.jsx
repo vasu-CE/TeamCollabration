@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
@@ -21,12 +21,13 @@ export default function TeamDetailsPage() {
   const [open, setOpen] = useState(false);
   const [team, setTeam] = useState(null);
   const [UserId, setUserId] = useState(null);
+  const navigate = useNavigate();
 
   // Get logged-in user from Redux
   const user = useSelector((state) => state.user.user);
   const loggedInUserId = user?.id;
   // const user = useSelector((state) => state.user.user);
-  console.log("Redux User State:", user);
+  // console.log("Redux User State:", user);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -94,7 +95,7 @@ export default function TeamDetailsPage() {
     }
   };
   useEffect(() => {
-    console.log(team?.leaderId);
+    // console.log(team?.leaderId);
     if (!team?.leaderId) return;
 
     async function fetchLeaderUserId() {
@@ -117,10 +118,10 @@ export default function TeamDetailsPage() {
   if (!team) return <p>Loading team details...</p>;
 
   // Check if the logged-in user is the team leader
-  console.log(UserId);
-  console.log("login user id ", loggedInUserId);
+  // console.log(UserId);
+  // console.log("login user id ", loggedInUserId);
   const isTeamLeader = UserId === loggedInUserId;
-  console.log(isTeamLeader);
+  // console.log(isTeamLeader);
 
   return (
     <div className="flex min-h-screen">
@@ -132,7 +133,7 @@ export default function TeamDetailsPage() {
           <h2 className="text-2xl font-semibold">Projects</h2>
           <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {team.projects?.map((project) => (
-              <Card key={project.id}>
+              <Card key={project.id} onClick={() => navigate(`/project/${project.id}`)} >
                 <CardHeader>
                   <CardTitle>{project.title}</CardTitle>
                 </CardHeader>

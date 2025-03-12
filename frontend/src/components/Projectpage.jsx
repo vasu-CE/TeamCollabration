@@ -1,181 +1,260 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { toast } from "sonner";
-import { HOME_API } from "@/lib/constant";
-import Sidebar from "../page/SideBar";
+"use client"
 
-const ProjectPage = () => {
-  const [projects, setProjects] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    technology: [], // Set technology as an array
-    gitHubLink: "",
-    isUnderSgp: false,
-    semester: "",
-  });
+import { useEffect, useState } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { ArrowLeft, Calendar, ExternalLink, Github, Users } from "lucide-react"
+// import Link from "next/link"
+import { Link } from "react-router-dom"
+import Sidebar from "@/page/SideBar"
+import axios from "axios"
+import { HOME_API } from "@/lib/constant"
 
-  // Handle Form Changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+const ProjectDetail = () => {
+  const [project, setProject] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const {id} = req.params();
 
-  // Handle technology input
-  const handleTechnologyChange = (e) => {
-    const input = e.target.value;
-    // Split the input into an array by commas, removing extra spaces
-    const technologiesArray = input.split(",").map((tech) => tech.trim()).filter(Boolean);
-    setForm({
-      ...form,
-      technology: technologiesArray, // Store as array
-    });
-  };
+  useEffect(() => {
+    const fetchProject = async () => {
+      // Simulate API call
+      // await new Promise((resolve) => setTimeout(resolve, 500))
+      const res = await axios.get(`${HOME_API}/students/get-project/${id}` , {withCredentials : true})
+      {console.log(res.data.message)}
+      setProject(res.data.message);
 
-  // Create Project
-  const createProject = async () => {
-    try {
-      const res = await axios.post(
-        `${HOME_API}/students/create-project/${team.id}`,
-
-        form, // Send the form directly, no need to wrap it in an object
-        { withCredentials: true }
-      );
-      // console.log(res);
-      if (res.data.success) {
-        toast.success("Project created successfully");
-        setForm({
-          title: "",
-          description: "",
-          technology: [], // Reset the technology array
-          gitHubLink: "",
-          isUnderSgp: false,
-          semester: "",
-        });
-        // fetchProjects();
-      } else {
-        toast.error("Failed to create project");
+      const projectData = {
+        id: 1,
+        title: "Student Connect Platform",
+        description:
+          "A comprehensive platform for students to connect, collaborate, and share resources. Features include real-time chat, project collaboration tools, and resource sharing.",
+        technology: ["React", "Next.js", "Prisma", "TypeScript", "Tailwind CSS"],
+        status: "IN_PROGRESS",
+        gitHubLink: "https://github.com/example/student-connect",
+        team: {
+          id: "team-1",
+          name: "Tech Innovators",
+          members: [
+            { id: "1", name: "Jane Doe", role: "Frontend Developer" },
+            { id: "2", name: "John Smith", role: "Backend Developer" },
+            { id: "3", name: "Alex Johnson", role: "UI/UX Designer" },
+          ],
+        },
+        teamId: "team-1",
+        isUnderSgp: true,
+        semester: "Fall 2023",
+        createdAt: new Date("2023-09-01T00:00:00.000Z"),
+        updatedAt: new Date("2023-10-15T00:00:00.000Z"),
       }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "An error occurred");
+
+      setProject(projectData)
+      setLoading(false)
     }
-  };
+
+    fetchProject()
+  }, [])
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "PLANNING":
+        return "secondary"
+      case "IN_PROGRESS":
+        return "default"
+      case "COMPLETED":
+        return "success"
+      case "ON_HOLD":
+        return "warning"
+      case "CANCELLED":
+        return "destructive"
+      default:
+        return "outline"
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto py-8 px-4 flex justify-center items-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading project details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!project) {
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <h2 className="text-2xl font-bold">Project not found</h2>
+        <p className="mt-2 text-muted-foreground">The project you're looking for doesn't exist or has been removed.</p>
+        <Button className="mt-4" asChild>
+          <Link href="/projects">Back to Projects</Link>
+        </Button>
+      </div>
+    )
+  }
+
+  // Format dates
+  const createdDate = new Date(project.createdAt).toLocaleDateString()
+  const updatedDate = new Date(project.updatedAt).toLocaleDateString()
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
+    <div className="flex min-h-screen">
       <Sidebar />
+      <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <Link href="/projects" className="flex items-center text-sm text-muted-foreground hover:text-primary">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Projects
+        </Link>
+      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">🚀 Projects</h1>
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <CardTitle className="text-2xl md:text-3xl">{project.title}</CardTitle>
+                  <CardDescription className="mt-2 flex items-center gap-2">
+                    <Badge variant={getStatusBadge(project.status)}>{project.status.replace("_", " ")}</Badge>
+                    {project.isUnderSgp && (
+                      <Badge variant="outline" className="ml-2">
+                        SGP {project.semester}
+                      </Badge>
+                    )}
+                  </CardDescription>
+                </div>
+                {project.gitHubLink && (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link
+                      href={project.gitHubLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      <Github className="mr-2 h-4 w-4" />
+                      View on GitHub
+                      <ExternalLink className="ml-1 h-3 w-3" />
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-muted-foreground">{project.description}</p>
+                </div>
 
-        {/* Project Form */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Create a New Project</h2>
-          <input
-            type="text"
-            name="title"
-            placeholder="Project Title"
-            value={form.title}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md mb-3"
-          />
-          <textarea
-            name="description"
-            placeholder="Project Description"
-            value={form.description}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md mb-3"
-          />
-          <input
-            type="text"
-            name="technology"
-            placeholder="Technologies Used (comma separated)"
-            value={form.technology.join(", ")} // Show array as comma-separated string
-            onChange={handleTechnologyChange} // Call the technology change handler
-            className="w-full p-2 border rounded-md mb-3"
-          />
-          <input
-            type="text"
-            name="gitHubLink"
-            placeholder="GitHub Link (optional)"
-            value={form.gitHubLink}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md mb-3"
-          />
-          <div className="flex items-center gap-3 mb-3">
-            <input
-              type="checkbox"
-              name="isUnderSgp"
-              checked={form.isUnderSgp}
-              onChange={handleChange}
-            />
-            <label className="text-gray-700">Is this an SGP project?</label>
-          </div>
-          {form.isUnderSgp && (
-            <input
-              type="text"
-              name="semester"
-              placeholder="Semester"
-              value={form.semester}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md mb-3"
-            />
-          )}
-          <button
-            onClick={createProject}
-            className="w-full p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-          >
-            Create Project
-          </button>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Technology Stack</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.technology.map((tech, index) => (
+                      <Badge key={index} variant="secondary">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Users className="mr-2 h-5 w-5" />
+                Team Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium">Team Name</h3>
+                  <p>{project.team.name}</p>
+                </div>
+
+                <div>
+                  <h3 className="font-medium mb-2">Team Members</h3>
+                  <ul className="space-y-2">
+                    {project.team.members.map((member) => (
+                      <li key={member.id} className="flex justify-between">
+                        <span>{member.name}</span>
+                        <span className="text-muted-foreground">{member.role}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Project List */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.length === 0 ? (
-            <p className="text-gray-500 text-center col-span-full">
-              No projects found.
-            </p>
-          ) : (
-            projects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
-              >
-                <h3 className="text-xl font-semibold text-blue-600">
-                  {project.title}
-                </h3>
-                <p className="text-gray-500 text-sm mb-4">
-                  Technologies: <span className="font-bold">{project.technology.join(", ")}</span>
-                </p>
-                <p className="text-gray-700">{project.description}</p>
-                {project.gitHubLink && (
-                  <a
-                    href={project.gitHubLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mt-3 text-blue-500 underline"
-                  >
-                    GitHub Link
-                  </a>
-                )}
-                <p className="text-gray-500 mt-3">
-                  Status:{" "}
-                  <span className="font-bold text-green-600">
-                    {project.status}
-                  </span>
-                </p>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Project Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Project ID</span>
+                <span>{project.id}</span>
               </div>
-            ))
-          )}
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Created</span>
+                <div className="flex items-center">
+                  <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <span>{createdDate}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Last Updated</span>
+                <div className="flex items-center">
+                  <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <span>{updatedDate}</span>
+                </div>
+              </div>
+
+              {project.isUnderSgp && (
+                <>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">SGP Semester</span>
+                    <span>{project.semester}</span>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button className="w-full">Edit Project</Button>
+              <Button variant="outline" className="w-full">
+                Project Timeline
+              </Button>
+              <Button variant="secondary" className="w-full">
+                Generate Report
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
-  );
-};
+    </div>
+  )
+}
 
-export default ProjectPage;
+export default ProjectDetail
+
