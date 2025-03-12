@@ -132,7 +132,8 @@ export default function TeamDetailsPage() {
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to send join request");
     }
-  };}
+  };
+
     
 
   
@@ -244,3 +245,4 @@ export default function TeamDetailsPage() {
     </div>
   );
 
+}
