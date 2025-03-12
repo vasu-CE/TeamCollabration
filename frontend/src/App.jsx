@@ -19,6 +19,7 @@ export default function App() {
       <Route path="/chat" element = {<ChatInterface />} />
       <Route path="/chatnew" element = {<Chat />} />
       <Route path="/team/:id" element = {<TeamDetailsPage />} />
+      <Route path="/project/:id" element = {<ProjectPage />} />
       
     </Routes>
   );

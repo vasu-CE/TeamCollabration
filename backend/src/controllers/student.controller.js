@@ -453,7 +453,18 @@ export const getProjects = async (req , res) => {
     try{
         const { projectId } = req.params;
         const projects = await prisma.project.findMany({
-            projectId
+            where : {id : parseInt(projectId)},
+            include : {
+                team : {
+                    include : {
+                        students : {
+                            include : {
+                                user : { select : { name : true} }
+                            }
+                        }
+                    }
+                }
+            }
         })
 
         return res.status(200).json(new ApiResponse(200 , {}, projects))

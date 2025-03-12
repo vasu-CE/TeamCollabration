@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { toast } from "sonner";
 import axios from "axios";
 import { HOME_API } from "@/lib/constant";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
+import Sidebar from "@/page/SideBar";
 
 export default function TeamDetailsPage() {
   const { id } = useParams();
@@ -31,7 +38,10 @@ export default function TeamDetailsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get(`${HOME_API}/students/get-team/${id}`, { withCredentials: true });
+        const res = await axios.get(`${HOME_API}/students/get-team/${id}`, {
+          withCredentials: true,
+        });
+
         if (res.data.success) {
           // console.log(res.data.data.students)
           setTeam(res.data.data);
@@ -122,7 +132,7 @@ export default function TeamDetailsPage() {
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to send join request");
     }
-  };
+  };}
     
 
   
@@ -181,7 +191,6 @@ export default function TeamDetailsPage() {
             </Card>
           ))}
         </div>
-      </div>
 
       {/* 🔹 Allow only Team Leader to create a project */}
       {isTeamLeader && (
@@ -232,5 +241,6 @@ export default function TeamDetailsPage() {
 )}
 
     </div>
+    </div>
   );
-}
+
