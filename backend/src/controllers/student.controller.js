@@ -427,7 +427,11 @@ export const getProjects = async (req , res) => {
             include : {
                 team : {
                     include : {
-                        students : true
+                        students : {
+                            include : {
+                                user : { select : { name : true} }
+                            }
+                        }
                     }
                 }
             }

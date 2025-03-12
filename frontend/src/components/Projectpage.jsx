@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Calendar, ExternalLink, Github, Users } from "lucide-react"
 // import Link from "next/link"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import Sidebar from "@/page/SideBar"
 import axios from "axios"
 import { HOME_API } from "@/lib/constant"
@@ -15,41 +15,14 @@ import { HOME_API } from "@/lib/constant"
 const ProjectDetail = () => {
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
-  const {id} = req.params();
+  const {id} = useParams();
 
   useEffect(() => {
     const fetchProject = async () => {
-      // Simulate API call
-      // await new Promise((resolve) => setTimeout(resolve, 500))
       const res = await axios.get(`${HOME_API}/students/get-project/${id}` , {withCredentials : true})
-      {console.log(res.data.message)}
-      setProject(res.data.message);
-
-      const projectData = {
-        id: 1,
-        title: "Student Connect Platform",
-        description:
-          "A comprehensive platform for students to connect, collaborate, and share resources. Features include real-time chat, project collaboration tools, and resource sharing.",
-        technology: ["React", "Next.js", "Prisma", "TypeScript", "Tailwind CSS"],
-        status: "IN_PROGRESS",
-        gitHubLink: "https://github.com/example/student-connect",
-        team: {
-          id: "team-1",
-          name: "Tech Innovators",
-          members: [
-            { id: "1", name: "Jane Doe", role: "Frontend Developer" },
-            { id: "2", name: "John Smith", role: "Backend Developer" },
-            { id: "3", name: "Alex Johnson", role: "UI/UX Designer" },
-          ],
-        },
-        teamId: "team-1",
-        isUnderSgp: true,
-        semester: "Fall 2023",
-        createdAt: new Date("2023-09-01T00:00:00.000Z"),
-        updatedAt: new Date("2023-10-15T00:00:00.000Z"),
-      }
-
-      setProject(projectData)
+      {console.log(res.data.message[0])}
+      setProject(res.data.message[0]);
+      // console.log(project);
       setLoading(false)
     }
 
@@ -58,16 +31,12 @@ const ProjectDetail = () => {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "PLANNING":
+      case "PENDING":
         return "secondary"
       case "IN_PROGRESS":
         return "default"
       case "COMPLETED":
         return "success"
-      case "ON_HOLD":
-        return "warning"
-      case "CANCELLED":
-        return "destructive"
       default:
         return "outline"
     }
@@ -117,9 +86,10 @@ const ProjectDetail = () => {
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
+                  
                   <CardTitle className="text-2xl md:text-3xl">{project.title}</CardTitle>
                   <CardDescription className="mt-2 flex items-center gap-2">
-                    <Badge variant={getStatusBadge(project.status)}>{project.status.replace("_", " ")}</Badge>
+                    <Badge variant={getStatusBadge(project.status)}>{project.status?.replace("_", " ")}</Badge>
                     {project.isUnderSgp && (
                       <Badge variant="outline" className="ml-2">
                         SGP {project.semester}
@@ -130,7 +100,7 @@ const ProjectDetail = () => {
                 {project.gitHubLink && (
                   <Button variant="outline" size="sm" asChild>
                     <Link
-                      href={project.gitHubLink}
+                      to={`${project.gitHubLink}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center"
@@ -153,7 +123,7 @@ const ProjectDetail = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Technology Stack</h3>
                   <div className="flex flex-wrap gap-2">
-                    {project.technology.map((tech, index) => (
+                    {project.technology?.map((tech, index) => (
                       <Badge key={index} variant="secondary">
                         {tech}
                       </Badge>
@@ -175,16 +145,16 @@ const ProjectDetail = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium">Team Name</h3>
-                  <p>{project.team.name}</p>
+                  <p>{project.team?.name}</p>
                 </div>
 
                 <div>
                   <h3 className="font-medium mb-2">Team Members</h3>
                   <ul className="space-y-2">
-                    {project.team.members.map((member) => (
-                      <li key={member.id} className="flex justify-between">
-                        <span>{member.name}</span>
-                        <span className="text-muted-foreground">{member.role}</span>
+                    {project.team?.students?.map((student) => (
+                      <li key={student.id} className="flex justify-between">
+                        <span>{(student.userId).toUpperCase()} {student.user.name}</span>
+                        <span className="text-muted-foreground">{student.batch}</span>
                       </li>
                     ))}
                   </ul>
