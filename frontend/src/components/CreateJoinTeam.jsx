@@ -46,7 +46,7 @@ function CreateJoinTeam() {
   
       if (res.data.success) {
         toast.success(res.data.message);
-        setTeamCode(""); // ✅ Clear input
+        setTeamCode(""); 
         // navigate("./teams")
 
       } else {

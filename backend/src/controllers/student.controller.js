@@ -348,7 +348,7 @@ export const createProject = async (req, res) => {
       });
   
       // Respond with success
-      return res.status(200).json(new ApiError(200, "Project created successfully", project));
+      return res.status(200).json({ success: true, message: "create project successfully" });
     } catch (err) {
       // Handle server error
       return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));

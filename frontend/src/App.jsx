@@ -1,7 +1,7 @@
 import { Route,Routes } from "react-router-dom";
 // import TeamDashboard from "./components/TeamDashboard";
 import Login from "./components/login";
-import Temp from "./components/temp";
+// import Temp from "./components/temp";
 import TeamsPage from "./components/Teams";
 import ProjectPage from "./components/Projectpage";
 import ChatInterface from "./page/ChatInterface";
@@ -13,7 +13,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/temp" element={<Temp />} />
+      {/* <Route path="/temp" element={<Temp />} /> */}
       <Route path="/teams" element = {<TeamsPage />} />
       <Route path="/projects" element = {<ProjectPage />} />
       <Route path="/chat" element = {<ChatInterface />} />

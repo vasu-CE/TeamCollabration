@@ -80,9 +80,10 @@ export default function TeamDetailsPage() {
     e.preventDefault();
     try {
       const res = await axios.post(`${HOME_API}/students/create-project/${id}`, formData, { withCredentials: true });
+     console.log(res.data.success)
       if (res.data.success) {
         toast.success("Project created successfully!");
-        setTeam((prev) => ({ ...prev, projects: [...prev.projects, res.data.project] }));
+        // setTeam((prev) => ({ ...prev, projects: [...prev.projects, res.data.project] }));
         setOpen(false);
       } else {
         toast.error(res.data.message);
@@ -125,19 +126,6 @@ export default function TeamDetailsPage() {
     
 
   
-  // useEffect(() => {
-  //   async function fetchRequests() {
-  //     try {
-  //       if (res.data.success) {
-  //         setRequests(getres.data.data);
-  //       }
-  //     } catch (err) {
-  //       toast.error("Failed to fetch requests");
-  //     }
-  //   }
-  //   fetchRequests();
-  // }, []);
-
 
   return (
     <div className="p-8">
