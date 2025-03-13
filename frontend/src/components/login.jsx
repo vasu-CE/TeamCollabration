@@ -18,7 +18,7 @@ export default function LoginPage() {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, user } = useSelector((state) => state.user);
 
   // Load user from localStorage when the component mounts
   useEffect(() => {
@@ -40,7 +40,14 @@ export default function LoginPage() {
       if (response.data.success) {
         dispatch(setUser(response.data.message));
         toast.success(`Welcome ${response.data.message.name}`);
-        navigate("/dashboard");
+        
+        // Navigate based on user role
+        console.log(response.data.message.role)
+        if (response.data.message.role === "FACULTY") {
+          navigate("/Fdashboard");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");

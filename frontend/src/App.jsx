@@ -8,6 +8,10 @@ import ChatInterface from "./page/ChatInterface";
 import Chat from "./components/Chat";
 import Dashboard from "./page/Dashboard";
 import TeamDetailsPage from "./components/Teamdetails";
+import FacultyDashboard from "./components/facultyDashbord"
+import FacultyTeams from "./components/FacultyTeams";
+import FacultyTeamDetails from "./components/FacultyTeamDetails";
+import FacultyMarks from "./components/getMark"
 export default function App() {
   return (
     <Routes>
@@ -20,6 +24,11 @@ export default function App() {
       <Route path="/chatnew" element = {<Chat />} />
       <Route path="/team/:id" element = {<TeamDetailsPage />} />
       <Route path="/project/:id" element = {<ProjectPage />} />
+      <Route path="/Fdashboard" element={<FacultyDashboard/>}/>
+      <Route path="/Fteams" element={<FacultyTeams/>}/>
+      <Route path="/Fteam/:id" element={<FacultyTeamDetails/>}/>
+      <Route path="/Fmarks" element={<FacultyMarks/>}/>
+
       
     </Routes>
   );

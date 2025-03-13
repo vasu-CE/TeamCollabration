@@ -2,69 +2,103 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import prisma from "../utils/prismClient.js";
 
-export const creatMark = async (req , res) => {
-    try{
-        const { internal1 , studentId} = req.body;
-        if(!internal1){
-            return res.status(404).json(new ApiError(404 , "Marks is required"));
-        }
 
-        const mark = await prisma.mark.create({
-            data : {
-                studentId,
-                internal1
-            }
-        })
+export const creatMark = async (req, res) => {
+  try {
+    console.log("Received data:", req.body); // Debugging
 
-        return res.status(200).json(new ApiResponse(200 , "Marks added successfully" , mark));
-    }catch(err){
-        return res.status(500).json(new ApiError(500 , err.message));
+    const { studentId, internal1 } = req.body;
+    // console.log(studentId, internal1)
+
+    if (!internal1) {
+      return res.status(400).json(new ApiError(400, "Marks are required"));
     }
-}
 
-export const updateMark = async (req ,res) => {
-    try {
-        const {id} = req.params;
-        const {internal1 , internal2 , external} = req.body;
-
-        const existingMark = await prisma.mark.findFirst({
-            where : {id : parseInt(id)}
-        })
-
-        if(!existingMark){
-            return res.status(404).json(new ApiError(404 , "Marks not found"))
-        }
-
-        let updated = {};
-        if (internal1 !== undefined) {
-            return res.status(400).json(new ApiError(404 ,"internal1 cannot be updated again" ));
-        }
-      
-        if (internal2 !== undefined) {
-          if (!existingMark.internal1) {
-            return res.status(400).json(new ApiError(404 ,"internal1 must be added before internal2" ));
-          }
-          updated.internal2 = internal2;
-        }
+    const existingMark = await prisma.mark.findFirst({
+      where: { studentId: String(studentId) }
+    });
     
-        if (external !== undefined) {
-          if (!existingMark.internal2) {
-            return res.status(400).json(new ApiError(404 , "internal2 must be added before external" ));
-          }
-          updated.external = external;
-        }
+    const isMarkPresent = !!existingMark; // Converts object presence to true/false
     
-        if (Object.keys(updated).length === 0) {
-          return res.status(400).json(new ApiError(404 , "No valid updates provided" ));
-        }
+    console.log(isMarkPresent); // true if data exists, false otherwise
     
-        const updatedMark = await prisma.mark.update({
-          where: { id: parseInt(id) },
-          data: updated,
-        });
+    
 
-        return res.status(200).json(new ApiResponse(200 , updatedMark));
-    } catch (err) {
-        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
+    let mark;
+
+    if (isMarkPresent) {
+      // Update existing mark
+      mark = await prisma.mark.updateMany({
+        where: { studentId: String(studentId) },
+        data: {
+          internal1: parseInt(internal1, 10)
+        }
+      });
+    } else {
+      // Create new mark
+      mark = await prisma.mark.create({
+        data: {
+          studentId,
+          internal1: parseInt(internal1, 10)
+        }
+      });
     }
-}
+
+    return res.status(200).json(new ApiResponse(200, "Marks updated successfully", mark));
+  } catch (err) {
+    return res.status(500).json(new ApiError(500, err.message));
+  }
+};
+
+
+export const getMarks = async (req, res) => {
+  try {
+    const { year, batch } = req.query;
+
+    console.log("Received Year & Batch:", year, batch);
+
+    if (!year || !batch) {
+      return res.status(400).json(new ApiError(400, "Year and batch are required"));
+    }
+
+    const faculty = await prisma.faculty.findFirst({
+      where: { userId: req.user.id },
+      include: { user: true }, // Fetch user details
+    });
+
+    if (!faculty) {
+      return res.status(404).json(new ApiError(404, "Faculty not found"));
+    }
+
+    // Fetch marks for students in the given year and batch
+    const marks = await prisma.mark.findMany({
+      where: {
+        student: {
+          current_study_year: year,
+          batch: batch,
+          user: {
+            department: faculty.user.department, // Ensure faculty can only access their department's students
+            institute: faculty.user.institute,   // Ensure faculty can only access their institute's students
+          },
+        },
+      },
+      include: {
+        student: {
+          include: { user: true }, // Fetch student's user details
+        },
+      },
+    });
+
+    console.log("Marks Found:", marks);
+
+    if (!marks.length) {
+      return res.status(404).json(new ApiResponse(404, "No marks found for the given filters"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Marks retrieved successfully", marks));
+  } catch (err) {
+    console.error("Error fetching marks:", err);
+    return res.status(500).json(new ApiError(500, err.message));
+  }
+};
+
