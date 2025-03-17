@@ -27,6 +27,7 @@ import {
   Calendar,
   User,
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const API_HEADERS = {
   headers: {
@@ -119,10 +120,16 @@ const GitHubAnalytics = () => {
   const [repoData, setRepoData] = useState(null);
   const [recentActivity, setRecentActivity] = useState([]);
   const COLORS = ["#3b82f6", "#ef4444", "#facc15", "#10b981", "#8b5cf6", "#ec4899"];
+  const location = useLocation();
+  let url = location.state?.githubLink || "https://github.com/clubgamma/club-gamma-backend";
+  let parts = url?.replace("https://github.com/" , "").split("/");
+  const owner = parts[0];
+  const repoName = parts[1];
 
   useEffect(() => {
     const fetchData = async () => {
-      const repoUrl = "https://api.github.com/repos/clubgamma/club-gamma-backend";
+
+      const repoUrl = `https://api.github.com/repos/${owner}/${repoName}`;
 
       const repo = await fetchGitHubData(repoUrl);
       if (repo) setRepoData(repo);

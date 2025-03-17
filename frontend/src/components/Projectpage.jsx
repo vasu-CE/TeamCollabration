@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Calendar, CheckCircle, Clock, Code, ExternalLink, FileText, Github, MoreHorizontal, PenTool, Star, Users } from "lucide-react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { AlignVerticalDistributeCenter, ArrowLeft, Calendar, ChartNoAxesCombined, CheckCircle, Clock, Code, ExternalLink, FileText, Github, MoreHorizontal, PenTool, Star, Users } from "lucide-react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 // import Sidebar from "@/components/Sidebar";
 import axios from "axios";
 import { HOME_API } from "@/lib/constant";
@@ -17,6 +17,7 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const teamId = location.state?.teamId;
+  const navigate = useNavigate();
   // console.log(teamId) 
 
   useEffect(() => {
@@ -130,7 +131,8 @@ const ProjectDetail = () => {
                 </div>
               </div>
               {project.gitHubLink && (
-                <Button className="bg-blue-100 hover:bg-blue-200 hover:text-blue-800 text-blue-700 backdrop-blur-sm border border-white/20" size="sm" asChild>
+                <div className="flex flex-col gap-3">
+                  <Button className="bg-blue-100 hover:bg-blue-200 hover:text-blue-800 text-blue-700 backdrop-blur-sm border border-white/20" size="sm" asChild>
                   <Link
                     to={project.gitHubLink}
                     target="_blank"
@@ -142,6 +144,17 @@ const ProjectDetail = () => {
                     <ExternalLink className="ml-1 h-3 w-3" />
                   </Link>
                 </Button>
+
+                <Button
+                  onClick = {() => navigate(`/performance` , {state : {githubLink : project.gitHubLink}} )}
+                  className="bg-blue-100 hover:bg-blue-200 hover:text-blue-800 text-blue-700 backdrop-blur-sm border border-white/20" size="sm" asChild>
+                    <span>
+                    <ChartNoAxesCombined className="mr-2 h-4 w-4" />
+                    Analyse project
+                    </span>
+                </Button>
+                </div>
+                
               )}
             </div>
           </div>
