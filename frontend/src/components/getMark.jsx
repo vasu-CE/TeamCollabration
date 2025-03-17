@@ -30,7 +30,7 @@ export default function FacultyMarks() {
         withCredentials: true,
       });
 
-      if (res.data.statusCode === 200) {
+      if (res.data.success) {
         setMarks(res.data.message);
         toast.success("Marks loaded successfully");
       } else {
@@ -38,7 +38,7 @@ export default function FacultyMarks() {
         toast.warning("No marks found");
       }
     } catch (error) {
-      toast.error("Failed to load marks");
+      toast.error("No marks found" || error.message);
       setMarks([]);
     }
   };
@@ -74,7 +74,7 @@ export default function FacultyMarks() {
   return (
     <div className="flex min-h-screen">
       <FacultySidebar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 ml-64">
         <h1 className="text-3xl font-bold text-gray-800">Faculty Marks</h1>
 
         {/* Filters */}

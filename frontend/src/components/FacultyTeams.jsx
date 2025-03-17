@@ -53,7 +53,7 @@ export default function FacultyTeams() {
   return (
     <div className="flex min-h-screen">
       <FacultySidebar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 ml-64">
         <h1 className="text-3xl font-bold text-gray-800">Faculty Teams</h1>
 
         {/* Filters */}

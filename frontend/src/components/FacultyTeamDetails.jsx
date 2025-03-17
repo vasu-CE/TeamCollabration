@@ -76,11 +76,11 @@ export default function FacultyTeamDetails() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <FacultySidebar />
-      <div className="flex-1 p-6 lg:p-10">
-        <h1 className="text-3xl font-bold mb-6 text-gray-900">Team Details</h1>
+      <div className="flex-1 p-6 lg:p-10 ">
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 ">Team Details</h1>
 
         {/* Team Members Section */}
-        <div className="bg-white shadow-md rounded-xl p-6 mb-8">
+        <div className="bg-white shadow-md rounded-xl p-6 mb-8 ml-64">
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Team Members & Marks</h2>
           {team.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

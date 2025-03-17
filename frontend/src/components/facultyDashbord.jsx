@@ -39,14 +39,14 @@ export default function FacultyDashboard() {
       <FacultySidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 ml-64">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Faculty Dashboard</h1>
 
         {/* Search Bar */}
         <div className="mb-6">
           <Input
             type="text"
-            placeholder="🔍 Search students..."
+            placeholder="Search students..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border p-3 rounded-md w-full shadow-sm"

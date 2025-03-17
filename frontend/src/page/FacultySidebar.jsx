@@ -4,7 +4,7 @@ import { Home, Users, ClipboardCheck, Settings, LogOut } from "lucide-react";
 
 export default function FacultySidebar() {
   return (
-    <div className="w-64 h-screen bg-[#F8FAFC] border-r shadow-md p-6 flex flex-col">
+    <div className="w-64 h-screen bg-[#F8FAFC] border-r shadow-md p-6 flex flex-col fixed">
       {/* Title */}
       <div className="text-3xl font-bold text-blue-600">TAPMS</div>
 
