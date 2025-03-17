@@ -12,6 +12,7 @@ import FacultyDashboard from "./components/facultyDashbord"
 import FacultyTeams from "./components/FacultyTeams";
 import FacultyTeamDetails from "./components/FacultyTeamDetails";
 import FacultyMarks from "./components/getMark"
+import GitHubAnalytics from "./components/GitHubAnalytics";
 export default function App() {
   return (
     <Routes>
@@ -28,7 +29,8 @@ export default function App() {
       <Route path="/Fteams" element={<FacultyTeams/>}/>
       <Route path="/Fteam/:id" element={<FacultyTeamDetails/>}/>
       <Route path="/Fmarks" element={<FacultyMarks/>}/>
-
+      <Route path="/performance" element={<GitHubAnalytics/>}/>
+      
       
     </Routes>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button } from "./ui/button";
@@ -25,6 +25,7 @@ export default function TeamDetailsPage() {
   const [studentId, setstudentId] = useState("");
   const user = useSelector((state) => state.user.user);
   const loggedInUserId = user?.id;
+  // console.log(id);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -157,7 +158,7 @@ export default function TeamDetailsPage() {
   return (
     <div className="flex min-h-screen w-screen">
     <Sidebar />
-        <div className="p-8 w-screen">
+        <div className=" ml-64 p-8 w-screen">
       <h1 className="text-4xl font-bold text-gray-800">{team.name}</h1>
 
       {/* 🔹 Team Members Section */}
@@ -204,7 +205,13 @@ export default function TeamDetailsPage() {
         <h2 className="text-2xl font-semibold text-gray-700">Projects</h2>
         <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {team.projects?.map((project) => (
-            <Card key={project.id} onClick={() => navigate(`/project/${project.id}`)} className="shadow-lg border border-gray-200">
+            <Card 
+              key={project.id}
+              onClick={() =>
+                navigate(`/project/${project.id}`, { state: { teamId: id } })
+              }
+              className="shadow-lg border border-gray-200"
+            >
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
                   {project.title}

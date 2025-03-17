@@ -47,7 +47,7 @@ const Dashboard = () => {
       <Sidebar />
 
       {/* ✅ Main content - Takes full width minus Sidebar */}
-      <div className="flex-1 p-8 bg-gray-100 overflow-auto">
+      <div className="ml-64 flex-1 p-8 bg-gray-100 overflow-auto">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Your Teams</h2>
 
         {teams?.length === 0 ? (

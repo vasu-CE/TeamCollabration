@@ -28,7 +28,7 @@ app.use(cors(corsOptions))
 
 app.use("/auth" , authRoutes);
 app.use("/users" , userRoutes);
-app.use("/students" , studentRoutes);
+app.use("/students" , studentRoutes);~
 app.use("/admin" , adminRoutes);
 app.use("/faculty" , facultyRoutes);
 app.use("/marks" ,markRoutes);

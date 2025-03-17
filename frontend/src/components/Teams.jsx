@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Search, Filter } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -57,7 +57,7 @@ export default function TeamsPage() {
           setRequests(getres.data.data);
         }
       } catch (error) {
-        toast.error("Failed to load team data");
+        toast.error("Failed to load team data" );
       }
     }
     fetchData();
@@ -95,7 +95,7 @@ export default function TeamsPage() {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="flex-1 p-8">
+      <div className="ml-64 flex-1 p-8">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-4xl font-bold">Teams</h1>

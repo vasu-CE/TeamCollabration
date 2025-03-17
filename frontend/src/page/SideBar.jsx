@@ -1,10 +1,9 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import { Home, Users, BarChart3, LineChart, MessageSquare, Settings, LogOut } from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <div className="w-64 h-screen bg-[#F8FAFC] border-r shadow-md p-6 flex flex-col">
+    <div className="w-64 h-screen bg-[#F8FAFC] border-r shadow-md p-6 flex flex-col fixed">
      
       <div className="text-3xl font-bold text-blue-600">TAPMS</div>
       
