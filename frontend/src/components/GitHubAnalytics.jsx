@@ -146,11 +146,7 @@ const GitHubAnalytics = () => {
 
     fetchData();
   }, []);
-  useEffect(() => {
-    {
-      console.log(commits);
-    }
-  }, [commits]);
+
   const recentCommits = commits.slice(0,-10).map((commit, index) => ({
     name: commit.commit.author.name,
     date: new Date(commit.commit.author.date).toLocaleDateString(), // Format date
@@ -171,17 +167,23 @@ const GitHubAnalytics = () => {
     return null;
   };
 
-  const commitCountsByAuthor = commits.reduce((acc, commit) => {
+    const commitCountsByAuthor = commits.reduce((acc, commit) => {
     const author = commit.commit.author.name;
     acc[author] = (acc[author] || 0) + 1;
+    // Log the commit count for each user (optional)
+    console.log(`Author: ${author}, Commits: ${acc[author]}`);
     return acc;
   }, {});
-  
+
   // Convert grouped data into an array for the chart
   const chartData = Object.entries(commitCountsByAuthor).map(([name, count]) => ({
     name,
     count,
   }));
+
+// Log the final chart data
+console.log(chartData);
+
 
   return (
     <div className="flex">

@@ -1,3 +1,4 @@
+import { sendMail } from "../mail/mailer.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import prisma from "../utils/prismClient.js";
@@ -41,7 +42,7 @@ export const addStudent = async (req , res) => {
                 batch
             }
         });
-    
+        await sendMail(email , "Your credential for TAPMS" , password);
         res.status(201).json(new ApiResponse(201, "Student added successfully", student ));
     }catch(err){
         console.log(err);
@@ -50,6 +51,7 @@ export const addStudent = async (req , res) => {
 }
 
 export const addFaculty = async (req , res) => {
+    // console.log("HY")
     try{
         const {email , name , department} = req.body;
         const existingUser = await prisma.user.findFirst({
@@ -78,6 +80,9 @@ export const addFaculty = async (req , res) => {
                 },
             }
         });
+        const text = `Your credential for TAPMS is ${password}`;
+
+        await sendMail(email , "Your credentials for TAPMS" , text);
 
         res.status(201).json(new ApiResponse(201 , "Faculty Created Successfully" , faculty));
     }catch(err){
