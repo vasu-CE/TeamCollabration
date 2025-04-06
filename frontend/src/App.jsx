@@ -16,6 +16,7 @@ import GitHubAnalytics from "./components/GitHubAnalytics";
 import { useSelector } from "react-redux";
 import AdminSidebar from "./page/AdminSidebar";
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import AdminBulkUploader from "./components/Admin/AdminBulkUploader";
 
 export default function App() {
   const userRole = useSelector((state) => state?.user?.user?.role);
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/Fteam/:id" element={<FacultyTeamDetails />} />
       <Route path="/Fmarks" element={<FacultyMarks />} />
       <Route path="/performance" element={<GitHubAnalytics />} />
+      <Route path="/bulkAdd" element={<AdminBulkUploader />} />
     </Routes>
   );
 }

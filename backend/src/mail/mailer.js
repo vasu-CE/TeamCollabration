@@ -23,7 +23,9 @@ export const sendMail = async (to , subject , text) => {
         };
 
         await transporter.sendMail(mailOptions);
+        // console.log("mailmsend succes fully");
         return new ApiResponse(200 , "Password sent successfully");
+
     } catch (err) {
         return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
     }

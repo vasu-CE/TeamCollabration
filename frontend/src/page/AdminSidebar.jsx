@@ -9,7 +9,7 @@ export default function AdminSideBar() {
 
       <nav className="mt-6 space-y-1">
         <SidebarItem to="/dashboard" icon={<Home className="h-5 w-5" />} label="Dashboard" />
-        <SidebarItem to="/" icon={<Users className="h-5 w-5" />} label="Teams" />
+        <SidebarItem to="/bulkAdd" icon={<Users className="h-5 w-5" />} label="Bulk add" />
         <SidebarItem to="/" icon={<ClipboardCheck className="h-5 w-5" />} label="Marks" />
       </nav>
 
