@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import AdminSidebar from "./page/AdminSidebar";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import AdminBulkUploader from "./components/Admin/AdminBulkUploader";
+import SettingsPage from "./page/setting";
 
 export default function App() {
   const userRole = useSelector((state) => state?.user?.user?.role);
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="/Fmarks" element={<FacultyMarks />} />
       <Route path="/performance" element={<GitHubAnalytics />} />
       <Route path="/bulkAdd" element={<AdminBulkUploader />} />
+      <Route path="/settings" element={<SettingsPage />} />
     </Routes>
   );
 }

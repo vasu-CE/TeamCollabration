@@ -83,7 +83,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-white">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-gray-800">
-            {forgotPasswordMode ? "Reset Password" : "Login"}
+            {forgotPasswordMode ? "Forgot PassWord" : "Login"}
           </CardTitle>
         </CardHeader>
         <CardContent>
