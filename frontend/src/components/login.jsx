@@ -22,8 +22,8 @@ export default function LoginPage() {
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [forgotPasswordData, setForgotPasswordData] = useState({
     identifier: "",
-    oldPassword: "",
-    newPassword: "",
+    // oldPassword: "",
+    // newPassword: "",
   });
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -64,14 +64,14 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${HOME_API}/auth/reset-password`,
+        `${HOME_API}/auth/forgot-password`,
         forgotPasswordData,
         { withCredentials: true }
       );
       if (response.data.success) {
         toast.success(response.data.message);
         setForgotPasswordMode(false);
-        setForgotPasswordData({ identifier: "", oldPassword: "", newPassword: "" });
+        setForgotPasswordData({ identifier: "" });
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
@@ -108,7 +108,7 @@ export default function LoginPage() {
             </div>
             {forgotPasswordMode && (
               <>
-                <div className="relative">
+                {/* <div className="relative">
                   <Input
                     type={showOldPassword ? "text" : "password"}
                     name="oldPassword"
@@ -117,8 +117,8 @@ export default function LoginPage() {
                     onChange={handleInputChange}
                     required
                     className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
+                  /> */}
+                  {/* <button
                     type="button"
                     onClick={() => setShowOldPassword(!showOldPassword)}
                     className="absolute inset-y-0 right-3 flex items-center"
@@ -129,8 +129,8 @@ export default function LoginPage() {
                       <Eye className="h-5 w-5 text-gray-500 hover:text-blue-600" />
                     )}
                   </button>
-                </div>
-                <div className="relative">
+                </div> */}
+                {/* <div className="relative">
                   <Input
                     type={showNewPassword ? "text" : "password"}
                     name="newPassword"
@@ -151,7 +151,7 @@ export default function LoginPage() {
                       <Eye className="h-5 w-5 text-gray-500 hover:text-blue-600" />
                     )}
                   </button>
-                </div>
+                </div> */}
               </>
             )}
             {!forgotPasswordMode && (
@@ -182,7 +182,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-3 rounded-lg hover:from-blue-600 hover:to-blue-800 transition-all"
             >
-              {forgotPasswordMode ? "Reset Password" : "Login"}
+              {forgotPasswordMode ? "Forgot Password" : "Login"}
             </Button>
           </form>
         </CardContent>

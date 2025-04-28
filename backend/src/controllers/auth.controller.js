@@ -1,8 +1,11 @@
+import { json } from "stream/consumers";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import prisma from "../utils/prismClient.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendMail } from "../mail/mailer.js";
+
 
 export const loginUser = async (req, res) => {
     try {
@@ -85,4 +88,33 @@ export const resetPassword = async (req , res) => {
     } catch (err) {
         return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));
     }
+}
+
+export const forgotpasswor=async(req ,res)=>{
+    try {
+        const { identifier } = req.body;
+        const user = await prisma.user.findFirst({
+            where: { email : identifier }
+        });
+        // console.log(user);
+        if(!user){
+            return res.status(404).json(new ApiError(404 , "User not found"));
+        }
+
+         const password = Math.random().toString(36).slice(-8);
+        const hashPassword =await bcrypt.hash(password , 10);
+                // console.log(password);
+            
+            const updatepass= await prisma.user.update({
+                    where: { email: identifier },
+                    data: { password: hashPassword },
+                });
+            // console.log(updatepass)
+        await sendMail(identifier , "Your updated  credential for TAPMS" , password);
+        return res.status(200).json(new ApiResponse(200 , "Please Check your mail Updated Password Sent Succesfully"));
+        
+    } catch (err) {
+        return res.status(500).json(new ApiError(500, err.message || "Internal Server Error"));        
+    }
+
 }
