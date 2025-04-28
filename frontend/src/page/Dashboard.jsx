@@ -4,7 +4,10 @@ import axios from "axios";
 import { toast } from "sonner";
 import { HOME_API } from "@/lib/constant";
 import { setTeams, clearTeams } from "@/redux/teamSlice";
-import Sidebar from "../page/SideBar"; // ✅ Ensure correct import
+import Sidebar from "../page/SideBar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Users, Code, Calendar, Clock } from "lucide-react";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -42,45 +45,76 @@ const Dashboard = () => {
   }, [userId]);
 
   return (
-    <div className="flex h-screen">
-      {/* ✅ Sidebar - Fixed on the left */}
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Sidebar />
 
-      {/* ✅ Main content - Takes full width minus Sidebar */}
-      <div className="ml-64 flex-1 p-8 bg-gray-100 overflow-auto">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Your Teams</h2>
-
-        {teams?.length === 0 ? (
-          <p className="text-center text-gray-500">No teams found.</p>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teams?.map((team) => (
-              <div key={team.id} className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-                <h3 className="text-xl font-semibold text-blue-600">{team.name}</h3>
-                <p className="text-gray-500 text-sm mb-4">
-                  Team Code: <span className="font-bold text-gray-800">{team.teamCode}</span>
-                </p>
-
-                <h4 className="text-lg font-medium text-gray-700">👥 Members:</h4>
-                <ul className="mt-2">
-                  {team?.students.length > 0 ? (
-                    team?.students?.map((member) => (
-                      <li key={member.id} className="flex items-center gap-2 p-2 bg-gray-100 rounded-md mt-1">
-                        <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full">
-                          {member.user.name.charAt(0)}
-                        </div>
-                        <span className="text-gray-700 font-medium">{member.user.name}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">No members in this team.</p>
-                  )}
-                </ul>
-              </div>
-            ))}
+      <ScrollArea className="flex-1 ml-64">
+        <div className="p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Welcome back, {user?.name || 'Student'}!</h1>
+            <p className="text-gray-600 mt-2">Here's an overview of your teams and projects</p>
           </div>
-        )}
-      </div>
+
+          {teams?.length === 0 ? (
+            <Card className="bg-white shadow-lg">
+              <CardContent className="p-8 text-center">
+                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No Teams Yet</h3>
+                <p className="text-gray-600">You haven't been assigned to any teams yet.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {teams?.map((team) => (
+                <Card key={team.id} className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-bold text-blue-600 flex items-center gap-2">
+                      <Code className="h-5 w-5" />
+                      {team.name}
+                    </CardTitle>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Calendar className="h-4 w-4" />
+                      <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="mb-4">
+                      <div className="text-sm font-medium text-gray-500 mb-2">Team Code</div>
+                      <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-md inline-block font-mono">
+                        {team.teamCode}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-medium text-gray-500 mb-2">Team Members</div>
+                      <div className="space-y-2">
+                        {team?.students.length > 0 ? (
+                          team?.students?.map((member) => (
+                            <div
+                              key={member.id}
+                              className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                            >
+                              <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full">
+                                {member.user.name.charAt(0)}
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-800">{member.user.name}</div>
+                                <div className="text-xs text-gray-500">{member.user.email}</div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-gray-500 text-sm">No members in this team.</p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
