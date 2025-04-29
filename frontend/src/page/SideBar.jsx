@@ -11,13 +11,13 @@ export default function Sidebar() {
         <SidebarItem to="/dashboard" icon={<Home className="h-5 w-5" />} label="Dashboard" />
         <SidebarItem to="/teams" icon={<Users className="h-5 w-5" />} label="Teams" />
         <SidebarItem to="/projects" icon={<BarChart3 className="h-5 w-5" />} label="Projects" />
-        <SidebarItem to="/performance" icon={<LineChart className="h-5 w-5" />} label="Performance" />
-        <SidebarItem to="/chat" icon={<MessageSquare className="h-5 w-5" />} label="Communication" />
+        {/* <SidebarItem to="/performance" icon={<LineChart className="h-5 w-5" />} label="Performance" /> */}
+        {/* <SidebarItem to="/chat" icon={<MessageSquare className="h-5 w-5" />} label="Communication" /> */}
       </nav>
 
       <div className="mt-auto pt-6 border-t">
         <SidebarItem to="/settings" icon={<Settings className="h-5 w-5" />} label="Settings" />
-        <SidebarItem to="/logout" icon={<LogOut className="h-5 w-5" />} label="Logout" />
+        <SidebarItem to="/" icon={<LogOut className="h-5 w-5" />} label="Logout" />
       </div>
     </div>
   );

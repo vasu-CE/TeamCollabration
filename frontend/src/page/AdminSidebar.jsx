@@ -10,12 +10,12 @@ export default function AdminSideBar() {
       <nav className="mt-6 space-y-1">
         <SidebarItem to="/dashboard" icon={<Home className="h-5 w-5" />} label="Dashboard" />
         <SidebarItem to="/bulkAdd" icon={<Users className="h-5 w-5" />} label="Bulk add" />
-        <SidebarItem to="/" icon={<ClipboardCheck className="h-5 w-5" />} label="Marks" />
+        {/* <SidebarItem to="/all-user" icon={<ClipboardCheck className="h-5 w-5" />} label="Users" /> */}
       </nav>
 
       <div className="mt-auto pt-6 border-t">
         <SidebarItem to="/settings" icon={<Settings className="h-5 w-5" />} label="Settings" />
-        <SidebarItem to="/logout" icon={<LogOut className="h-5 w-5" />} label="Logout" />
+        <SidebarItem to="/" icon={<LogOut className="h-5 w-5" />} label="Logout" />
       </div>
     </div>
   );

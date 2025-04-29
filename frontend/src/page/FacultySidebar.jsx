@@ -17,7 +17,7 @@ export default function FacultySidebar() {
       {/* Bottom Links */}
       <div className="mt-auto pt-6 border-t">
         <SidebarItem to="/settings" icon={<Settings className="h-5 w-5" />} label="Settings" />
-        <SidebarItem to="/logout" icon={<LogOut className="h-5 w-5" />} label="Logout" />
+        <SidebarItem to="/" icon={<LogOut className="h-5 w-5" />} label="Logout" />
       </div>
     </div>
   );

@@ -4,8 +4,6 @@ import Login from "./components/login";
 // import Temp from "./components/temp";
 import TeamsPage from "./components/Teams";
 import ProjectPage from "./components/Projectpage";
-import ChatInterface from "./page/ChatInterface";
-import Chat from "./components/Chat";
 import Dashboard from "./page/Dashboard";
 import TeamDetailsPage from "./components/Teamdetails";
 import FacultyDashboard from "./components/facultyDashbord";
@@ -18,6 +16,7 @@ import AdminSidebar from "./page/AdminSidebar";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import AdminBulkUploader from "./components/Admin/AdminBulkUploader";
 import SettingsPage from "./page/setting";
+// import handleLogout from "./components/logout";
 
 export default function App() {
   const userRole = useSelector((state) => state?.user?.user?.role);
@@ -34,8 +33,7 @@ export default function App() {
       {/* <Route path="/temp" element={<Temp />} /> */}
       <Route path="/teams" element={<TeamsPage />} />
       <Route path="/projects" element={<ProjectPage />} />
-      <Route path="/chat" element={<ChatInterface />} />
-      <Route path="/chatnew" element={<Chat />} />
+      
       <Route path="/team/:id" element={<TeamDetailsPage />} />
       <Route path="/project/:id" element={<ProjectPage />} />
       <Route path="/Fdashboard" element={<FacultyDashboard />} />
