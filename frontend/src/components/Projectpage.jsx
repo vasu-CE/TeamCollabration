@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { AlignVerticalDistributeCenter, ArrowLeft, Calendar, ChartNoAxesCombined, CheckCircle, Clock, Code, ExternalLink, FileText, Github, MoreHorizontal, PenTool, Star, Users } from "lucide-react";
+import { ArrowLeft, Calendar, ChartNoAxesCombined, CheckCircle, Clock, Code, ExternalLink, FileText, Github, MoreHorizontal, PenTool, Star, Users } from "lucide-react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 // import Sidebar from "@/components/Sidebar";
 import axios from "axios";

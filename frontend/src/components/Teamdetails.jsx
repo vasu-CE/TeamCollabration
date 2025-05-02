@@ -199,6 +199,8 @@ export default function TeamDetailsPage() {
           ))}
         </ul>
       </div>
+        
+      
 
       {/* 🔹 Projects Section */}
       <div className="mt-8">
@@ -210,7 +212,7 @@ export default function TeamDetailsPage() {
               onClick={() =>
                 navigate(`/project/${project.id}`, { state: { teamId: id } })
               }
-              className="shadow-lg border border-gray-200"
+              className="shadow-lg border border-gray-200 cursor-pointer"
             >
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
