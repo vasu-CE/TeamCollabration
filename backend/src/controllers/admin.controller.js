@@ -5,6 +5,7 @@ import prisma from "../utils/prismClient.js";
 import bcrypt from "bcrypt";
 
 export const addStudent = async (req , res) => {
+
     const {studentId , email, name, department , current_study_year, passing_year, batch} = req.body;
 
     try{
@@ -29,7 +30,6 @@ export const addStudent = async (req , res) => {
                 department
             }
         });
-
         const student = await prisma.student.create({
             data : {
                 user : {

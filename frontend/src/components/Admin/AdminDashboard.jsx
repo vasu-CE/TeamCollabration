@@ -40,11 +40,11 @@ function AdminDashboard() {
               email: userData.email,
               department: userData.department,
             };
-        console.log({
-          name: userData.name,
-          email: userData.email,
-          department: userData.department,
-        })
+        // console.log({
+        //   name: userData.name,
+        //   email: userData.email,
+        //   department: userData.department,
+        // })
       const response = await axios.post(
         `${HOME_API}/admin${endpoint}`,
         payload,

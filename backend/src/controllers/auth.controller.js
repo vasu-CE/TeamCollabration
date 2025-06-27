@@ -32,17 +32,17 @@ export const loginUser = async (req, res) => {
         if (!user.password) {
             return res.status(500).json(new ApiError(500, "User has no password set"));
         }
-
         // Debugging logs
         // console.log("Entered Password:", password);
         // console.log("Stored Password Hash:", user.password);
-
+        
         // Compare password with stored hash
         const validPassword = await bcrypt.compare(password, user.password);
+
         if (!validPassword) {
             return res.status(401).json(new ApiError(401, "Invalid Credentials"));
         }
-
+        
         // Generate JWT token
         const token = jwt.sign(
             { userId: user.id, role: user.role },
