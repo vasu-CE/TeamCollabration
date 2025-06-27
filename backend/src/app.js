@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 const corsOptions = {
-  origin: *, // Allow frontend origin
+  origin:   origin: ["http://localhost:5173","https://tapms-1.onrender.com"], // Allow frontend origin
+ // Allow frontend origin
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   credentials: true ,// Allow cookies and credentials
 };
